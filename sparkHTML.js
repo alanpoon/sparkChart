@@ -449,32 +449,79 @@ var objPushCount=0;
   console.log("date",date);
   return date instanceof Date && !isNaN(date.valueOf());}
   };
-chartPreGen=function(data3){
+  interpolateData=function(data5,tDomainDate) {
+var yearFormat=d3.time.format("%Y");
+			var minYear=yearFormat(tDomainDate[0]); 
+			console.log("minYear",minYear);
+			var maxYear= yearFormat(tDomainDate[1]);
+			var yearRange=_.range(parseInt(minYear),(parseInt(maxYear)+1));
+			console.log("yearRange:",yearRange, "subPeriodSelect_val:", subPeriodSelect_val);
+ var periodInterpolateClass={
+	 "month":function(yearRange,subPeriodSelect_val){ var interpolateArr=[]; _.each(yearRange,function(m) {
+	 _.each(subPeriodSelect_val,function(k){ interpolateArr.push(m+"-"+k);});
+	 }); return interpolateArr;},
+	"quarter":function(yearRange,subPeriodSelect_val){ var interpolateArr=[]; _.each(yearRange,function(m) {
+	 _.each(subPeriodSelect_val,function(k){ interpolateArr.push(m+"-"+k);});
+	 });return interpolateArr;},
+	 "year":function(yearRange,subPeriodSelect_val){ 
+	 return subPeriodSelect_val;
+	 }
+ };
+ var result=data5;
+ d3.nest().key(function(d,i) { return d.groupby1+"_"+d.columnName;})
+			.rollup(function(d,i) { 
+			var existingCategory=_.uniq(_.pluck(d,'category'));
+			var differenceCategory=_.difference(periodInterpolateClass[periodSelect_val](yearRange,subPeriodSelect_val),existingCategory);
+			console.log("beef differenceCategory",differenceCategory);
+			
+			
+			var interpolatedData=[];
+			_.each(differenceCategory,function(m){
+			var sampleObj=_.clone(d[0]);
+			console.log("beef sampleObj",sampleObj,"m:",m);
+			sampleObj['category']=m;
+			sampleObj['value']=0;
+			sampleObj['tColSubPeriod']=(_.str.include(m,'-')) ? m.split("-")[1] :m;
+			interpolatedData.push(sampleObj);
+			});
+			
+			result=_.union(result,interpolatedData);
+			console.log("teef interpolatedData",JSON.stringify(interpolatedData));
+			console.log("teef result",JSON.stringify(result));
+			})
+			.entries(data5);
+			return result;
+ };
+chartPreGen=function(data3,tDomainDate){
 //interpolate data3 by month
- interpolateData=function(data3) {
  
- 
- }
 var data4=[];
 	var nestBy=d3.nest().key(function(d,i) {return d.category+"_"+d.groupby1+"_"+d.columnName;})
 						.rollup(function(d,i) { var sampleObj=_.clone(d[0]); var sumValue=sum(_.pluck(d,'value'));
-						sampleObj['value']=sumValue;
+												sampleObj['value']=sumValue;
 						data4.push(sampleObj);
 					 }).entries(data3);
-	  var data5=formatXTicksAndOrdering(data4,view);
-		  console.log("data5",JSON.stringify(data5));
-			var data6=sortCategory(data5);
-			console.log("data6",JSON.stringify(data6));
-			
-			
+		  var data5=interpolateData(data4,tDomainDate);
+		    console.log("data5",JSON.stringify(data5));
+	  var data6=formatXTicksAndOrdering(data5,view);
+		
+		
+		  console.log("data6",JSON.stringify(data6));
+			var data7=sortCategory(data6);
+			console.log("data7",JSON.stringify(data7));
+	//Append preparation
+
+//[{"model":"spline","yAxis":"1","columnName":"sum(Income)","columnNameWithoutOp":"Income","opName":"sum","value":116,"category":"2014-Jan","groupby1":"Alabama","legendKey":"Alabama_sum(Income)","tColSubPeriod":"Jan"}]		
+	var sparkNest=d3.nest().key(function(d,i){return d.groupby1;})
+							.key(function(d,i){return d.columnName;})
+							.map(data7,d3.map);
+console.log("teef sparkNest",JSON.stringify(sparkNest));							
 //append to the selector
 var table_Spark=d3.select('#${id}_table-sparkline');
 var table_Body=table_Spark.append("tbody").attr("id",viewId+'_tbody-sparkline');
 var table_Head=table_Spark.append("thead").attr("id",viewId+'_thead_th').append('tr');
 
-//Append preparation
-console.log('groupedData',JSON.stringify(groupedData));
-//[{"model":"spline","yAxis":"1","columnName":"sum(Income)","columnNameWithoutOp":"Income","opName":"sum","value":116,"category":"2014-Jan","groupby1":"Alabama","legendKey":"Alabama_sum(Income)","tColSubPeriod":"Jan"}]
+
 
 
 var nRowsArr=[];
@@ -714,6 +761,8 @@ valueOperating=function(modelData,valueOperationKey,formatValueOperationCast){
   //--Data Grouping Tab
     addDataGroupFn = function(modelData, tCol, dataGroupKey, dataGroupHex, viewId) {
 		console.log("dataGroupKey",dataGroupKey);
+		      var tDomainDate = setTDomain1(modelData, tCol);
+			console.log("tDomainDate",tDomainDate);
         if (dataGroupKey === 'timePeriodOptions') {
 			
             var dataGroupContent = d3.select(dataGroupHex);
@@ -724,7 +773,7 @@ valueOperating=function(modelData,valueOperationKey,formatValueOperationCast){
                 .attr("multiple", "multiple")
                 .attr("size", 5);
 			
-            var tDomainDate = setTDomain1(modelData, tCol);
+      
             var periodSelect_hex = '#periodSelect_' + viewId;
 			console.log("front periodSelect_el",$(periodSelect_hex));
             var subPeriodSelect_hex = '#subPeriodSelect_' + viewId;
@@ -749,7 +798,7 @@ valueOperating=function(modelData,valueOperationKey,formatValueOperationCast){
 	
 		$(periodSelect_hex).empty();
 		$(subPeriodSelect_hex).empty();
-		chartPreGen(modelData);
+		chartPreGen(modelData,tDomainDate);
 		
 		}
     };
@@ -853,7 +902,7 @@ valueOperating=function(modelData,valueOperationKey,formatValueOperationCast){
 				 groupedData=valueOperating(groupedData,valueOperationKey,formatValueOperationCast);
 				
 				 if (_.size(groupedData)==0) groupedData =[{model:'column',category:'2012-06-20',yAxis:'L1'}];
-				chartPreGen(groupedData);
+				chartPreGen(groupedData,tDomainDate);
                 
                 return subPeriodSelect_val.join(", ");
             },
@@ -863,7 +912,7 @@ valueOperating=function(modelData,valueOperationKey,formatValueOperationCast){
                var groupedData = dataGroupUsed(modelData, tCol,subPeriodSelect_val);
 			   groupedData =valueOperating(groupedData,valueOperationKey,formatValueOperationCast);
 			   if (_.size(groupedData)==0) groupedData =[{model:'column',category:'2012-06-20',yAxis:'L1'}];
-			   chartPreGen(groupedData);
+			   chartPreGen(groupedData,tDomainDate);
                
             },minWidth:400
 
