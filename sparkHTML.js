@@ -1,5 +1,9 @@
 <style type='text/css'>
-#${id}_result {	text-align: right;color: gray;min-height: 2em;} #${id}_table-sparkline {margin: 0 auto;border-collapse: collapse;}#${id}_th {font-weight: bold;text-align: left;padding: 5px;    border-bottom: 1px solid silver;height: 20px;}#${id}_td {padding: 5px;border-bottom: 1px solid silver;height: 20px;}#${id}_thead {border-top: 2px solid gray;border-bottom: 2px solid gray;} #${id}_th{border-top: 2px solid gray;border-bottom: 2px solid gray;} .highcharts-tooltip>span {background: white;border: 1px solid silver;border-radius: 3px;box-shadow: 1px 1px 2px #888;padding: 8px;}
+#${id}_result {	text-align: right;color: gray;min-height: 2em;} #${id}_table-sparkline {margin: 0 auto;border-collapse: collapse;}
+#${id}_th {font-weight: bold;text-align: center;padding: 5px;    border-bottom: 1px solid silver;height: 20px;border-top: 2px solid gray;border-bottom: 2px solid gray;}
+#${id}_td {padding: 5px;border-bottom: 1px solid silver;height: 20px;}
+#${id}_thead_th {border-top: 2px solid gray;border-bottom: 2px solid gray;} 
+ .highcharts-tooltip>span {background: white;border: 1px solid silver;border-radius: 3px;box-shadow: 1px 1px 2px #888;padding: 8px;}
  .ui-multiselect{padding:2px 0 2px 4px;text-align:left}.ui-multiselect span.ui-icon{float:right}.ui-multiselect-single .ui-multiselect-checkboxes input{position:absolute!important;top:auto!important;left:-9999px}.ui-multiselect-single .ui-multiselect-checkboxes label{padding:5px!important}.ui-multiselect-header{margin-bottom:3px;padding:3px 0 3px 4px}.ui-multiselect-header ul{font-size:.9em}.ui-multiselect-header ul li{float:left;padding:0 10px 0 0}.ui-multiselect-header a{text-decoration:none}.ui-multiselect-header a:hover{text-decoration:underline}.ui-multiselect-header span.ui-icon{float:left}.ui-multiselect-header li.ui-multiselect-close{float:right;text-align:right;padding-right:0}.ui-multiselect-menu{display:none;padding:3px;position:absolute;z-index:10000;text-align:left}.ui-multiselect-checkboxes{position:relative;overflow-y:auto}.ui-multiselect-checkboxes label{cursor:default;display:block;border:1px solid transparent;padding:3px 1px}.ui-multiselect-checkboxes label input{position:relative;top:1px}.ui-multiselect-checkboxes li{clear:both;font-size:.9em;padding-right:3px}.ui-multiselect-checkboxes li.ui-multiselect-optgroup-label{text-align:center;font-weight:700;border-bottom:1px solid}.ui-multiselect-checkboxes li.ui-multiselect-optgroup-label a{display:block;padding:3px;margin:1px 0;text-decoration:none}* html .ui-multiselect-checkboxes label{border:none}
 </style>
 <table id='dataGroup_${id}'></table>
@@ -18,6 +22,10 @@ var legendKey=view.typeinfo.legendKey;
 var formatLegendCast=view.typeinfo.formatLegendCast;
 var valueOperationKey=view.typeinfo.valueOperationKey;
 var formatValueOperationCast=view.typeinfo.formatValueOperationCast;
+var textValueKey=view.typeinfo.textValueKey;
+var formatTextValueCast=view.typeinfo.formatTextValueCast;
+var xTicksKey=view.typeinfo.xTicksKey;
+var formatOrderingCast=view.typeinfo.formatOrderingCast;
 	  var keys=[];
 	k.forEach(function(d,i) {
     keys.push(d.name);})
@@ -32,9 +40,11 @@ var formatValueOperationCast=view.typeinfo.formatValueOperationCast;
 	var periodSelect_val='month', subPeriodSelect_val,dataGroupUsed, cToggleType, smpGroupbySize;
 	var periodSelect_el,subPeriodSelect_el;
 	var chartPreGen;
-   var Set_GroupFn1, Get_CategoryFn,average, chartGen, groupByFn,reduceCToggle, arrToHex1,hexToModel1, smpColName, sum;
+   var Set_GroupFn1, Get_CategoryFn, chartGen, groupByFn,reduceCToggle, arrToHex1,hexToModel1, smpColName;
+   var formatXTicksAndOrdering,sortByFixedGroupbyClass,autoDetectCategory;
+   
   var model_TypeSplitClass,model_DataConvertClass,model_APIClass;
-  
+  var formatTextValueObj;
   debugFn();
   multiSelectFn(jQuery);// initalise multiSelect datagroup js
    if (view.data.jsonClass === "DataEmbedded"){ 
@@ -71,6 +81,7 @@ var formatValueOperationCast=view.typeinfo.formatValueOperationCast;
  console.log("data1",JSON.stringify(data1));
   var data2 = hexToModel1(data1, legendKey,formatLegendCast,view);
    console.log("data2",JSON.stringify(data2));
+   
    addDataGroupFn(data2, 'category', dataGroupKey, '#dataGroup_' + viewId, viewId);
   
   
@@ -328,36 +339,306 @@ groupByFn = function(data, groupByArr) {
 	}).entries(data);
 	return result;
 };
-chartPreGen=function(groupedData){
+
+  formatXTicksAndOrdering= function(modelData,view) {
+  //Data preProcess
+  var formatScale;
+  var testArray=["2012-11-25","Jan","Peter","Jan-2014"];
+  var sampleCategory=modelData[0].category;
+  var autoDetectArray=['parsableDate','month'];
+  var detected;
+  var detected2='month';
+  _.each(autoDetectArray,function(d,i) {
+  if (autoDetectCategory[d](sampleCategory)) detected=d; 
+   });
+  
+  for (var i=0;i< autoDetectArray.lenth;i++){
+  var j=autoDetectArray[i];
+  if (autoDetectCategory[j](sampleCategory)) {detected=d; 
+   break;}
+  }
+   if (typeof detected =='undefined') detected ='normal';
+ var formatXTicks,formatOrdering; 
+  
+var objPushCount=0;
+  var autoArr=[];
+
+  switch(orderingKey){
+  case 'formatOrderingCast': eval(formatOrderingCast);break;
+  case 'alphabetical' :break;
+  case 'monthString' :formatOrdering=function (d) { 
+  var arr=d.category;
+  var date=new Date(arr+' 15, 2014');return date.getTime()/1000}; break;
+  case 'year-month' :formatOrdering=function(d){var arr=(d.category).split('-');
+  var date=new Date(arr[1]+' 15,'+arr[0]);return date.getTime()/1000}; break;
+  case 'month-year' :formatOrdering=function(d) {var arr=(d.category).split('-');
+  var date=new Date(arr[0]+' 15,'+arr[1]);return date.getTime()/1000}; break;
+  case 'year-quarter' : formatOrdering=function(d) {
+  var arr=(d.category).split('-');
+  var monthValue=(parseInt(arr[1].split("Q")[1]))*3;
+  var monthArr=['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+  console.log("before monthValue",monthValue);
+  var date=new Date(monthArr[monthValue-1]+' 15,'+arr[0]);return date.getTime()/1000
+  }; break;
+    case 'year-year':formatOrdering=function(d){
+	return parseInt(d);
+  }; break;
+  case 'date': formatOrdering=function(d) {
+    return (new Date(d.category)).getTime()/1000;
+    };break;
+  case 'valueAscending':formatOrdering=function(d) {
+    return d.value;  }; break;
+  case 'valueDescending':formatOrdering=function(d) {
+  return -d.value;}; break;
+  case 'default':break;
+  }
+  
+  if(xTicksKey.contains("%")){
+  formatXTicks=function(val){ var date= new Date(val); var formatter=d3.time.format(xTicksKey); return formatter(date);};
+  } else if (xTicksKey=='formatXTicksCast') {eval(formatXTicksCast);} else formatXTicks=function(val) {return val;};
+
+    var colNameNest = d3.nest().key(function(d) {return d.columnName;})
+  .rollup(function(d) {
+  
+  _.each(d,function(record,objPushCount) {
+   var autoObj=record;
+    if (objPushCount ==0) console.log("objpush for Formating Order",JSON.stringify(record));
+  
+    if (typeof formatOrdering!=='undefined'){
+   autoObj['ordering']=formatOrdering(record); 
+    } 
+  
+  if (typeof formatXTicks!=='undefined') {
+
+    autoObj['category']=formatXTicks(record.category);
+  }
+  autoArr.push(autoObj);
+  
+  });
+  return ;
+  })
+  .entries(modelData);	
+  
+  return autoArr;
+  };
+  
+  sortCategory= function(orderedData){
+  //orderedData contains 'ordering' as a property
+  //sortedData is sorted according to the ordering
+  if( typeof orderedData[0].ordering!=='undefined') {
+    var sortedData=[];
+  var sortNest = d3.nest().key(function(d) {return d.columnName;}).rollup(function(d) {
+  var orderedByColName=d.sort(function(a,b) {
+  return a.ordering-b.ordering;
+  }); 
+  _.each(orderedByColName,function(d){
+  sortedData.push(d);
+  });
+  return;
+  }).entries(orderedData);
+  return sortedData;
+} else return orderedData;
+  };
+   autoDetectCategory={
+  "parsableDate":function(d) {
+  //accepts "yyyy-mm-dd","Jul 20,2014"
+  var date=new Date(d);
+  return date instanceof Date && !isNaN(date.valueOf());
+       },
+  "month":function(d) { var date=new Date(d+" 2,2014");
+  console.log("date",date);
+  return date instanceof Date && !isNaN(date.valueOf());}
+  };
+chartPreGen=function(data3){
+//interpolate data3 by month
+ interpolateData=function(data3) {
+ 
+ 
+ }
+var data4=[];
+	var nestBy=d3.nest().key(function(d,i) {return d.category+"_"+d.groupby1+"_"+d.columnName;})
+						.rollup(function(d,i) { var sampleObj=_.clone(d[0]); var sumValue=sum(_.pluck(d,'value'));
+						sampleObj['value']=sumValue;
+						data4.push(sampleObj);
+					 }).entries(data3);
+	  var data5=formatXTicksAndOrdering(data4,view);
+		  console.log("data5",JSON.stringify(data5));
+			var data6=sortCategory(data5);
+			console.log("data6",JSON.stringify(data6));
+			
+			
 //append to the selector
 var table_Spark=d3.select('#${id}_table-sparkline');
 var table_Body=table_Spark.append("tbody").attr("id",viewId+'_tbody-sparkline');
-var table_Head=table_Spark.append("thead").attr("id",viewId+'_thead').append('tr');
+var table_Head=table_Spark.append("thead").attr("id",viewId+'_thead_th').append('tr');
 
 //Append preparation
 console.log('groupedData',JSON.stringify(groupedData));
 //[{"model":"spline","yAxis":"1","columnName":"sum(Income)","columnNameWithoutOp":"Income","opName":"sum","value":116,"category":"2014-Jan","groupby1":"Alabama","legendKey":"Alabama_sum(Income)","tColSubPeriod":"Jan"}]
+
+
 var nRowsArr=[];
 var nRowsNest=d3.nest().key(function(d,i) {return d.groupby1;}).rollup(function(d,i) {nRowsArr.push(d[0].groupby1);}).entries(groupedData);
-_.each(nRowsArr,function(m,i) { table_Body.append("tr").attr("id","bodyTag"+m).append("th").text(m);});
+_.each(nRowsArr,function(m,i) { table_Body.append("tr").attr("id","bodyTag"+m).append("th").attr("id","${id}_th").text(m);});
 
 var nHeadArr=(view.typeinfo.header).split(',');
-_.each(nHeadArr,function(m,i) {table_Head.append("th").text(m); });
+_.each(nHeadArr,function(m,i) {table_Head.append("th").attr("id","${id}_th").text(m); });
 
-var valueObj={'Alabama':[254,296,-42],'Alaska':[246,181,65]};
 var chartObj={'Alabama':[[71,78,39,66],[68,52,80,96],[3,26,-41,-30]],'Alaska':[[87,44,74,41],[29,54,73,25],[58,-10,1,16]]};
-var chartType={'Alabama':['column','column','column'],'Alaska':['column','column','column']};
+
+var valueObj=formatTextValueObj(chartObj,textValueKey,formatTextValueCast);
 var firstChartProperty=nRowsArr[0];
 _.each(nRowsArr,function(d,i) {
 var bodyTag = table_Body.select('#bodyTag'+d);
-	_.each(valueObj[d],function(m,n) { bodyTag.append("td").text(m);
-	bodyTag.append("td").attr("data-sparkline",chartObj[d][n].join(",")+chartType[d][n]);
+	_.each(valueObj[d],function(m,n) { bodyTag.append("td").attr("id","${id}_td").text(m);
+	bodyTag.append("td").attr("id","${id}_td").attr("data-sparkline",chartObj[d][n].join(" ,"));
 	});
 });
 
 chartGen();
 };
 chartGen=function(){
+  Highcharts.SparkLine = function (options, callback) {
+        var defaultOptions = {
+            chart: {
+                renderTo: (options.chart && options.chart.renderTo) || this,
+                backgroundColor: null,
+                borderWidth: 0,
+                type: 'area',
+                margin: [2, 0, 2, 0],
+                width: 120,
+                height: 20,
+                style: {
+                    overflow: 'visible'
+                },
+                skipClone: true
+            },
+            title: {
+                text: ''
+            },
+            credits: {
+                enabled: false
+            },
+            xAxis: {
+                labels: {
+                    enabled: false
+                },
+                title: {
+                    text: null
+                },
+                startOnTick: false,
+                endOnTick: false,
+                tickPositions: []
+            },
+            yAxis: {
+                endOnTick: false,
+                startOnTick: false,
+                labels: {
+                    enabled: false
+                },
+                title: {
+                    text: null
+                },
+                tickPositions: [0]
+            },
+            legend: {
+                enabled: false
+            },
+            tooltip: {
+                backgroundColor: null,
+                borderWidth: 0,
+                shadow: false,
+                useHTML: true,
+                hideDelay: 0,
+                shared: true,
+                padding: 0,
+                positioner: function (w, h, point) {
+                    return { x: point.plotX - w / 2, y: point.plotY - h};
+                }
+            },
+            plotOptions: {
+                series: {
+                    animation: false,
+                    lineWidth: 1,
+                    shadow: false,
+                    states: {
+                        hover: {
+                            lineWidth: 1
+                        }
+                    },
+                    marker: {
+                        radius: 1,
+                        states: {
+                            hover: {
+                                radius: 2
+                            }
+                        }
+                    },
+                    fillOpacity: 0.25
+                },
+                column: {
+                    negativeColor: '#910000',
+                    borderColor: 'silver'
+                }
+            }
+        };
+        options = Highcharts.merge(defaultOptions, options);
+
+        return new Highcharts.Chart(options, callback);
+    };
+
+    var start = +new Date(),
+        $tds = $("td[data-sparkline]"),
+        fullLen = $tds.length,
+        n = 0;
+
+    // Creating 153 sparkline charts is quite fast in modern browsers, but IE8 and mobile
+    // can take some seconds, so we split the input into chunks and apply them in timeouts
+    // in order avoid locking up the browser process and allow interaction.
+    function doChunk() {
+        var time = +new Date(),
+            i,
+            len = $tds.length;
+
+        for (i = 0; i < len; i++) {
+            var $td = $($tds[i]),
+                stringdata = $td.data('sparkline'),
+                arr = stringdata.split('; '),
+                data = $.map(arr[0].split(' ,'), parseFloat),
+                chart = {};
+
+            if (arr[1]) {
+                chart.type = arr[1];
+            }
+            $td.highcharts('SparkLine', {
+                series: [{
+                    data: data,
+                    pointStart: 1
+                }],
+                tooltip: {
+                    headerFormat: '&lt;span style="font-size: 10px"&gt;' + $td.parent().find('th').html() + ', Q{point.x}:&lt;/span&gt;&lt;br/&gt;',
+                    pointFormat: '&lt;b&gt;{point.y}.000&lt;/b&gt; USD'
+                },
+                chart: chart
+            });
+
+            n++;
+            
+            // If the process takes too much time, run a timeout to allow interaction with the browser
+            if (new Date() - time > 500) {
+                $tds.splice(0, i + 1);
+                setTimeout(doChunk, 0);
+                break;
+            }
+
+            // Print a feedback on the performance
+            if (n === fullLen) {
+                $('#result').html('Generated ' + fullLen + ' sparklines in ' + (new Date() - start) + ' ms');
+            }
+        }
+    }
+    doChunk();
+    
 
 };
 //--Used in valueOperating
@@ -633,6 +914,25 @@ valueOperating=function(modelData,valueOperationKey,formatValueOperationCast){
 
     };
 	//--end Data Grouping Tab
+	
+	//specific for sparkchart
+	formatTextValueObj=function(chartObj,textValueKey,formatTextValueCast) {
+	var formatTextValue;
+	var textValue;
+	switch (textValueKey) {
+	case 'sum': formatTextValue=function(arr) {return sum(arr);}; break;
+	case 'average': formatTextValue=function(arr) {return average(arr);}; break;
+	case 'formatTextValueCast' : eval(formatTextValueCast);
+	}
+	var valueObj={};
+	for (var propertyName in chartObj) {
+	valueObj[propertyName]=[];
+	_.each(chartObj[propertyName],function(d,i) {
+	valueObj[propertyName].push(formatTextValue(d));
+	});
+	} return valueObj;
+	};
+	//end specific for sparkchart
   }
   //helper function for data grouping multiselect
 	function setTDomain1(modelData, tCol) {
@@ -686,5 +986,15 @@ function getQuarter(d) {
 	return secondDate.getFullYear()-firstDate.getFullYear();
 	}
 	//--end helper function for data grouping multiselect
+function sum(arr) {
+    return d3.round(_.reduce(arr, (function(memo, num) {
+        return memo + num;
+    }), 0),2);
+};
 
+ function average(arr) {
+    return d3.round(_.reduce(arr, function(memo, num) {
+        return memo + num;
+    }, 0) / arr.length,2);
+};
 </div>

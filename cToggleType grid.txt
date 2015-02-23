@@ -1,0 +1,3 @@
+CtoggleType
+Type1
+Type2
