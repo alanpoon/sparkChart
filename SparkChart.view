@@ -1,3 +1,888 @@
+<<<<<<<=view-json=
+{
+  "id":"SparkChart",
+  "name":"SparkChart",
+  "category":"Chart",
+  "default":{
+    "jsonClass":"View",
+    "elxType":"View",
+    "vtype":"bundle",
+    "state":"visible",
+    "isContainer":false,
+    "position":{
+      "jsonClass":"Position",
+      "elxType":"Position",
+      "height":"480",
+      "width":"600",
+      "zIndex":"auto"
+    },
+    "data":{
+      "jsonClass":"DataEmbedded",
+      "datasource":{
+        "jsonClass":"DataSource",
+        "name":"initData",
+        "stype":"Data",
+        "desc":"default data",
+        "schema":{
+          "jsonClass":"Schema",
+          "caseSensitive":false,
+          "columns":[{
+            "jsonClass":"SchemaColumn",
+            "name":"Income",
+            "dtype":"Double",
+            "attrs":[]
+          },{
+            "jsonClass":"SchemaColumn",
+            "name":"Cost",
+            "dtype":"Double",
+            "attrs":[]
+          },{
+            "jsonClass":"SchemaColumn",
+            "name":"Result",
+            "dtype":"Double",
+            "attrs":[]
+          },{
+            "jsonClass":"SchemaColumn",
+            "name":"Date",
+            "dtype":"String",
+            "attrs":[]
+          },{
+            "jsonClass":"SchemaColumn",
+            "name":"CToggle",
+            "dtype":"String",
+            "attrs":[]
+          },{
+            "jsonClass":"SchemaColumn",
+            "name":"State",
+            "dtype":"String",
+            "attrs":[]
+          }]
+        },
+        "data":{
+          "jsonClass":"DataRecords",
+          "records":[{
+            "jsonClass":"Record",
+            "fields":[{
+              "jsonClass":"Field",
+              "value":49.9
+            },{
+              "jsonClass":"Field",
+              "value":7
+            },{
+              "jsonClass":"Field",
+              "value":24
+            },{
+              "jsonClass":"Field",
+              "value":"2014-10-11"
+            },{
+              "jsonClass":"Field",
+              "value":"Type1"
+            },{
+              "jsonClass":"Field",
+              "value":"Alabama"
+            }]
+          }]
+        }
+      },
+      "hint":"directive-data-array",
+      "directive":"ZnVuY3Rpb24gZGF0YSgpew0KdmFyIGNUb2dnbGVUeXBlPXZpZXcudHlwZWluZm8uZGF0YS5maWVsZHMuY1RvZ2dsZVR5cGVDb2w7DQogICAgdmFyIHQ9dmlldy50eXBlaW5mby5kYXRhLmZpZWxkcy5vcGVyYWJsZS52YWx1ZXM7DQogIAl2YXIgaz12aWV3LnR5cGVpbmZvLmRhdGEuZmllbGRzLmtleXM7DQoNCiAgdmFyIGNvbHVtbnM9W107IHZhciBvcGVyYXRpb25zPVtdOyB2YXIga2V5cz1bXTsNCiAga2V5cy5wdXNoKGNUb2dnbGVUeXBlWzBdLm5hbWUpOw0KICB0LmZvckVhY2goZnVuY3Rpb24oZCxpKSB7DQogIGNvbHVtbnMucHVzaChkLm5hbWUpOw0KICAgIG9wZXJhdGlvbnMucHVzaChkLm9wKTsNCiAgfSkNCiAgay5mb3JFYWNoKGZ1bmN0aW9uKGQsaSkgew0KICAgIGtleXMucHVzaChkLm5hbWUpO30pDQogICByZXR1cm4gcm93cy5ncm91cEJ5KGtleXMsY29sdW1ucywgb3BlcmF0aW9ucyk7DQp9DQpkYXRhKCk7"
+    },
+    "typeinfo":{
+      "jsonClass":"Bundle",
+      "type":"SparkChart",
+      "data":{
+        "series":{
+          "sort":"series-asc"
+        },
+        "keys":{
+          "sort":"key-asc"
+        },
+        "fields":{
+          "cToggleTypeCol":[{
+            "name":"CToggle"
+          }],
+          "keys":[{
+            "name":"Date"
+          },{
+            "name":"State"
+          }],
+          "operable":{
+            "values":[{
+              "id":"spline.1",
+              "name":"Income",
+              "op":"sum"
+            },{
+              "id":"spline.2",
+              "name":"Cost",
+              "op":"sum"
+            },{
+              "id":"spline.1",
+              "name":"Result",
+              "op":"sum"
+            }]
+          }
+        }
+      },
+      "width":500,
+      "height":510,
+      "dataGroupKey":"timePeriodOptions",
+      "title":"Average Monthly R_column and R_splime in Tokyo",
+      "subtitle":"Source: WorldClimate.com",
+        "cToggleKey":"cToggleEnabled",
+      "legendKey":"lastGroupby_op",
+      "formatLegendCast":"",
+       "valueOperationKey":"default",
+      "formatValueOperationCast":"operation.prototype.value=function(){ return [this.A-this.B];}",
+      "formatValueOperationArg":"A",
+      "header":"State,Income,Income per quarter,Costs,Costs per quarter,Result,Result per quarter",
+      "textValueKey":"formatTextValueCast",
+      "formatTextValueCast":"formatTextValue={1:function(arr){ return _.reduce(arr,function(a,b){return a+b;},0);},2:function(arr){ return _.reduce(arr,function(a,b){return 5;},0);}}",
+      "xTicksKey":"string",
+      "formatXTicksCast":"",
+      "formatOrderingCast":"",
+       "orderingKey":"monthString",
+      "valueDecimals":"2",
+      "valuePrefix":"$",
+      "valueSuffix":"USD"
+      }
+  },
+  "includes":["/elx/lib/highcharts.js","/elx/lib/Accent2.js","/elx/lib/multiSelectCustom.js"],
+  "edit-section":[{
+    "id":"view",
+    "name":"View"
+  },{
+    "id":"data",
+    "name":"Data"
+  },{
+    "id":"SparkChart",
+    "name":"SparkChart"
+  },{
+    "id":"filters",
+    "name":"Filters"
+  }]
+}
+========
+<<<<<<<=edit-json=
+{
+	   "jsonClass":"ViewSectionGroup",
+	   "id":"SparkChart",
+	   "groups":[
+		  {
+			 "jsonClass":"Group",
+			 "label":"Data",
+			 "rows":[
+				{
+				   "jsonClass":"Row",
+				   "cols":[
+					  {
+						 "jsonClass":"Label",
+						 "id":"typeinfo-height-label",
+						 "type":"label",
+						 "text":"Chart Height"
+					  },
+					  {
+						 "jsonClass":"Field",
+						 "id":"typeinfo-height",
+						 "type":"field",
+						 "value":"${typeinfo.height}",
+						 "readonly":false
+					  }
+				   ]
+				},
+				{
+				   "jsonClass":"Row",
+				   "cols":[
+					  {
+						 "jsonClass":"Label",
+						 "id":"typeinfo-width-label",
+						 "type":"label",
+						 "text":"Chart Width"
+					  },
+					  {
+						 "jsonClass":"Field",
+						 "id":"typeinfo-width",
+						 "type":"field",
+						 "value":"${typeinfo.width}",
+						 "readonly":false
+					  }
+				   ]
+				},
+				{
+				   "jsonClass":"Row",
+				   "cols":[
+					  {
+						 "jsonClass":"Label",
+						 "id":"typeinfo-centre-label",
+						 "type":"label",
+						 "text":"Chart centre"
+					  },
+					  {
+						 "jsonClass":"Field",
+						 "id":"typeinfo-centre",
+						 "type":"field",
+						 "value":"${typeinfo.centre}",
+						 "readonly":false
+					  }
+				   ]
+				},
+				{
+				   "jsonClass":"Row",
+				   "cols":[
+					  {
+						 "jsonClass":"Label",
+						 "id":"typeinfo-property-label",
+						 "type":"label",
+						 "text":"Keys"
+					  },
+					  {
+						 "jsonClass":"Div",
+						 "id":"typeinfo-property"
+					  }
+				   ]
+				},
+				{
+				   "jsonClass":"Row",
+				   "cols":[
+					  {
+						 "jsonClass":"Label",
+						 "id":"typeinfo-data-fields-operable-values-label",
+						 "type":"label",
+						 "text":"Column"
+					  },
+					  {
+						 "jsonClass":"Div",
+						 "id":"typeinfo-data-fields-operable-values"
+					  }
+				   ]
+				}
+			 ]
+		  },
+		  {
+			 "jsonClass":"Group",
+			 "label":"Data Grouping",
+			 "rows":[
+				{
+				   "jsonClass":"Row",
+				   "cols":[
+					  {
+						 "jsonClass":"Label",
+						 "id":"typeinfo-dataGroupKey-label",
+						 "type":"label",
+						 "text":"Data Group"
+					  },
+					  {
+						 "jsonClass":"Select",
+						 "id":"typeinfo-dataGroupKey",
+						 "type":"select",
+						 "value":"${typeinfo.dataGroupKey}",
+						 "options":[
+							{
+							   "jsonClass":"Option",
+							   "text":"default",
+							   "value":"default"
+							},
+							{
+							   "jsonClass":"Option",
+							   "text":"Time Period Options",
+							   "value":"timePeriodOptions"
+							}
+						 ]
+					  }
+				   ]
+				}
+			 ]
+		  },
+		  
+		  {
+			 "jsonClass":"Group",
+			 "label":"cToggle",
+			 "rows":[
+			   
+				{
+				   "jsonClass":"Row",
+				   "cols":[
+					  {
+						 "jsonClass":"Label",
+						 "id":"typeinfo-cToggleKey-label",
+						 "type":"label",
+						 "text":"cToggleKey"
+					  },
+					  {
+						 "jsonClass":"Select",
+						 "id":"typeinfo-cToggleKey",
+						 "type":"select",
+						 "value":"${typeinfo.cToggleKey}",
+						 "options":[
+							{
+							   "jsonClass":"Option",
+							   "text":"default",
+							   "value":"default"
+							},
+							{
+							   "jsonClass":"Option",
+							   "text":"Enable Chart Toggle",
+							   "value":"cToggleEnabled"
+							}
+						 ]
+					  }
+				   ]
+				},
+				{
+				   "jsonClass":"Row",
+				   "cols":[
+					  {
+						 "jsonClass":"Label",
+						 "id":"typeinfo-cToggleTypeCol-label",
+						 "type":"label",
+						 "text":"Chart Toggle Type"
+					  },
+					  {
+						 "jsonClass":"SchemaColumnSelect",
+						 "id":"typeinfo-data-cToggleTypeCol",
+						 "type":"select-schema-column",
+						 "value":"${typeinfo.data.cToggleTypeCol}"
+					  }
+				   ]
+				}
+			 ]
+          },{
+         "jsonClass":"Group",
+         "label":"x Axis",
+         "rows":[
+         
+            {
+               "jsonClass":"Row",
+               "cols":[
+                  {
+                     "jsonClass":"Label",
+                     "id":"typeinfo-xTicksKey-label",
+                     "type":"label",
+                     "text":"XTicks Key"
+                  },
+                  {
+                     "jsonClass":"Select",
+                     "id":"typeinfo-xTicksKey",
+                     "type":"select",
+                     "value":"${typeinfo.xTicksKey}",
+                     "options":[
+                        {
+                           "jsonClass":"Option",
+                           "text":"month string",
+                           "value":"%b"
+                        },
+                        {
+                           "jsonClass":"Option",
+                           "text":"dd-mm-yyyy",
+                           "value":"%d-%m-%Y"
+                        },
+                        {
+                           "jsonClass":"Option",
+                           "text":"string",
+                           "value":"string"
+                        },
+                        {
+                           "jsonClass":"Option",
+                           "text":"format XTicks Cast",
+                           "value":"formatXTicksCast"
+                        }
+                     ]
+                  }
+               ]
+            },
+            
+            {
+               "jsonClass":"Row",
+               "cols":[
+                  {
+                     "jsonClass":"Label",
+                     "id":"typeinfo-formatXTicksCast-label",
+                     "type":"label",
+                     "text":"Format XTicks"
+                  },
+                  {
+                     "jsonClass":"Field",
+                     "id":"typeinfo-formatXTicksCast",
+                     "type":"field",
+                     "value":"${typeinfo.formatXTicksCast}",
+                     "readonly":false
+                  }
+               ]
+            },
+            {
+               "jsonClass":"Row",
+               "cols":[
+                  {
+                     "jsonClass":"Label",
+                     "id":"typeinfo-orderingKey-label",
+                     "type":"label",
+                     "text":"Ordering Key"
+                  },
+                  {
+                     "jsonClass":"Select",
+                     "id":"typeinfo-orderingKey",
+                     "type":"select",
+                     "value":"${typeinfo.orderingKey}",
+                     "options":[
+                        {
+                           "jsonClass":"Option",
+                           "text":"month string",
+                           "value":"monthString"
+                        },
+                        {
+                           "jsonClass":"Option",
+                           "text":"year-month",
+                           "value":"year-month"
+                        },
+                        {
+                           "jsonClass":"Option",
+                           "text":"month-year",
+                           "value":"month-year"
+                        },
+                        {
+                           "jsonClass":"Option",
+                           "text":"alphabetical",
+                           "value":"alphabetical"
+                        },
+                        {
+                           "jsonClass":"Option",
+                           "text":"date",
+                           "value":"date"
+                        },
+                        {
+                           "jsonClass":"Option",
+                           "text":"value Descending",
+                           "value":"valueDescending"
+                        },
+                        {
+                           "jsonClass":"Option",
+                           "text":"value Ascending",
+                           "value":"valueAscending"
+                        },
+                        {
+                           "jsonClass":"Option",
+                           "text":"format ordering cast",
+                           "value":"formatOrderingCast"
+                        }
+                     ]
+                  }
+               ]
+            },
+            {
+               "jsonClass":"Row",
+               "cols":[
+                  {
+                     "jsonClass":"Label",
+                     "id":"typeinfo-formatOrderingCast-label",
+                     "type":"label",
+                     "text":"Format Ordering"
+                  },
+                  {
+                     "jsonClass":"Field",
+                     "id":"typeinfo-formatOrderingCast",
+                     "type":"field",
+                     "value":"${typeinfo.formatOrderingCast}",
+                     "readonly":false
+                  }
+               ]
+            }
+         ]
+      },{
+			 "jsonClass":"Group",
+			 "label":"Legend",
+			 "rows":[
+				{
+				   "jsonClass":"Row",
+				   "cols":[
+					  {
+						 "jsonClass":"Label",
+						 "id":"typeinfo-legendKey-label",
+						 "type":"label",
+						 "text":"Legend Key"
+					  },
+					  {
+						 "jsonClass":"Select",
+						 "id":"typeinfo-legendKey",
+						 "type":"select",
+						 "value":"${typeinfo.legendKey}",
+						 "options":[
+							{
+							   "jsonClass":"Option",
+							   "text":"lastGroupby_operation",
+							   "value":"lastGroupby_op"
+							},
+							{
+							   "jsonClass":"Option",
+							   "text":"allGroupby",
+							   "value":"allGroupby"
+							},
+							{
+							   "jsonClass":"Option",
+							   "text":"op(ColumnName)",
+							   "value":"op(ColumnName)"
+							},
+							{
+							   "jsonClass":"Option",
+							   "text":"ColumnName",
+							   "value":"ColumnName"
+							},
+							{
+							   "jsonClass":"Option",
+							   "text":"Format Legend",
+							   "value":"formatLegend"
+							}
+						 ]
+					  }
+				   ]
+				},
+				{
+				   "jsonClass":"Row",
+				   "cols":[
+					  {
+						 "jsonClass":"Label",
+						 "id":"typeinfo-formatLegendCast-label",
+						 "type":"label",
+						 "text":"Format Legend"
+					  },
+					  {
+						 "jsonClass":"Field",
+						 "id":"typeinfo-formatLegendCast",
+						 "type":"field",
+						 "value":"${typeinfo.formatLegendCast}",
+						 "readonly":false
+					  }
+				   ]
+				},
+				{
+				   "jsonClass":"Row",
+				   "cols":[
+					  {
+						 "jsonClass":"Label",
+						 "id":"typeinfo-legendEscortLines-label",
+						 "type":"label",
+						 "text":"Legends for Escort Lines $/type/"
+					  },
+					  {
+						 "jsonClass":"Field",
+						 "id":"typeinfo-legendEscortLines",
+						 "type":"field",
+						 "value":"${typeinfo.legendEscortLines}",
+						 "readonly":false
+					  }
+				   ]
+				},
+				{
+				   "jsonClass":"Row",
+				   "cols":[
+					  {
+						 "jsonClass":"Label",
+						 "id":"typeinfo-typeAntiType-label",
+						 "type":"label",
+						 "text":"Type and AntiType for chart Toggle"
+					  },
+					  {
+						 "jsonClass":"Field",
+						 "id":"typeinfo-typeAntiType",
+						 "type":"field",
+						 "value":"${typeinfo.typeAntiType}",
+						 "readonly":false
+					  }
+				   ]
+				},
+				{
+				   "jsonClass":"Row",
+				   "cols":[
+					  {
+						 "jsonClass":"Label",
+						 "id":"typeinfo-cToggleKey-label",
+						 "type":"label",
+						 "text":"cToggleKey"
+					  },
+					  {
+						 "jsonClass":"Select",
+						 "id":"typeinfo-cToggleKey",
+						 "type":"select",
+						 "value":"${typeinfo.cToggleKey}",
+						 "options":[
+							{
+							   "jsonClass":"Option",
+							   "text":"default",
+							   "value":"default"
+							},
+							{
+							   "jsonClass":"Option",
+							   "text":"Enable Chart Toggle",
+							   "value":"cToggleEnabled"
+							}
+						 ]
+					  }
+				   ]
+				},
+				{
+				   "jsonClass":"Row",
+				   "cols":[
+					  {
+						 "jsonClass":"Label",
+						 "id":"typeinfo-cToggleTypeCol-label",
+						 "type":"label",
+						 "text":"Chart Toggle Type"
+					  },
+					  {
+						 "jsonClass":"SchemaColumnSelect",
+						 "id":"typeinfo-data-cToggleTypeCol",
+						 "type":"select-schema-column",
+						 "value":"${typeinfo.data.cToggleTypeCol}"
+					  }
+				   ]
+				}
+			 ]
+		  },
+      {
+         "jsonClass":"Group",
+         "label":"ToolTip",
+         "rows":[
+            {
+               "jsonClass":"Row",
+               "cols":[
+                  {
+                     "jsonClass":"Label",
+                     "id":"typeinfo-valueDecimals-label",
+                     "type":"label",
+                     "text":"Value Decimal"
+                  },
+                   {
+                     "jsonClass":"Field",
+                     "id":"typeinfo-valueDecimals",
+                     "type":"field",
+                     "value":"${typeinfo.valueDecimals}",
+                     "readonly":false
+                  }
+               ]
+            },
+            {
+               "jsonClass":"Row",
+               "cols":[
+                  {
+                     "jsonClass":"Label",
+                     "id":"typeinfo-valuePrefix-label",
+                     "type":"label",
+                     "text":"Value Prefix"
+                  },
+                  {
+                     "jsonClass":"Field",
+                     "id":"typeinfo-valuePrefix",
+                     "type":"field",
+                     "value":"${typeinfo.valuePrefix}",
+                     "readonly":false
+                  }
+               ]
+            },
+            {
+               "jsonClass":"Row",
+               "cols":[
+                  {
+                     "jsonClass":"Label",
+                     "id":"typeinfo-valueSuffix-label",
+                     "type":"label",
+                     "text":"Value Suffix"
+                  },
+                  {
+                     "jsonClass":"Field",
+                     "id":"typeinfo-valueSuffix",
+                     "type":"field",
+                     "value":"${typeinfo.valueSuffix}",
+                     "readonly":false
+                  }
+               ]
+            }
+         ]
+      },{
+			 "jsonClass":"Group",
+			 "label":"Value Operation ?id:A/",
+			 "rows":[
+				{
+				   "jsonClass":"Row",
+				   "cols":[
+					  {
+						 "jsonClass":"Label",
+						 "id":"typeinfo-valueOperationKey-label",
+						 "type":"label",
+						 "text":"Value Operation Key"
+					  },
+					  {
+						 "jsonClass":"Select",
+						 "id":"typeinfo-valueOperationKey",
+						 "type":"select",
+						 "value":"${typeinfo.valueOperationKey}",
+						 "options":[
+							{
+							   "jsonClass":"Option",
+							   "text":"default",
+							   "value":"default"
+							},
+							{
+							   "jsonClass":"Option",
+							   "text":"formatValueOperation",
+							   "value":"formatValueOperation"
+							}
+						 ]
+					  }
+				   ]
+				},
+				{
+				   "jsonClass":"Row",
+				   "cols":[
+					  {
+						 "jsonClass":"Label",
+						 "id":"typeinfo-formatValueOperationCast-label",
+						 "type":"label",
+						 "text":"Format Value Operation"
+					  },
+					  {
+						 "jsonClass":"Field",
+						 "id":"typeinfo-formatValueOperationCast",
+						 "type":"field",
+						 "value":"${typeinfo.formatValueOperationCast}",
+						 "readonly":false
+					  }
+				   ]
+				},
+				{
+				   "jsonClass":"Row",
+				   "cols":[
+					  {
+						 "jsonClass":"Label",
+						 "id":"typeinfo-formatValueOperationArg-label",
+						 "type":"label",
+						 "text":"First Argument in the array"
+					  },
+					  {
+						 "jsonClass":"Field",
+						 "id":"typeinfo-formatValueOperationArg",
+						 "type":"field",
+						 "value":"${typeinfo.formatValueOperationArg}",
+						 "readonly":false
+					  }
+				   ]
+				}
+			 ]
+		  },{
+			 "jsonClass":"Group",
+			 "label":"Header",
+			 "rows":[
+				{
+				   "jsonClass":"Row",
+				   "cols":[
+					  {
+						 "jsonClass":"Label",
+						 "id":"typeinfo-Header-label",
+						 "type":"label",
+						 "text":"Header"
+					  },
+					    {
+						 "jsonClass":"Field",
+						 "id":"typeinfo-Header",
+						 "type":"field",
+						 "value":"${typeinfo.Header}",
+						 "readonly":false
+					  }
+				   ]
+				}
+			 ]
+		  },{
+			 "jsonClass":"Group",
+			 "label":"Text Format",
+			 "rows":[
+				{
+				   "jsonClass":"Row",
+				   "cols":[
+					  {
+						 "jsonClass":"Label",
+						 "id":"typeinfo-textValueKey-label",
+						 "type":"label",
+						 "text":" TextValue Key"
+					  },
+					  {
+						 "jsonClass":"Select",
+						 "id":"typeinfo-textValueKey",
+						 "type":"select",
+						 "value":"${typeinfo.textValueKey}",
+						 "options":[
+							{
+							   "jsonClass":"Option",
+							   "text":"default",
+							   "value":"default"
+							},
+							{
+							   "jsonClass":"Option",
+							   "text":"formatTextValue",
+							   "value":"formatTextValue"
+							}
+						 ]
+					  }
+				   ]
+				},
+				{
+				   "jsonClass":"Row",
+				   "cols":[
+					  {
+						 "jsonClass":"Label",
+						 "id":"typeinfo-formatTextValueCast-label",
+						 "type":"label",
+						 "text":"Format Text Value Operation"
+					  },
+					  {
+						 "jsonClass":"Field",
+						 "id":"typeinfo-formatTextValueCast",
+						 "type":"field",
+						 "value":"${typeinfo.formatTextValueCast}",
+						 "readonly":false
+					  }
+				   ]
+				}
+			 ]
+		  }
+		  
+	   ]
+	}
+========
+<<<<<<<=edit-js=
+elx.bundle.type.SparkChart = {
+
+  	init : function(view) {
+         	  var dataKey = elx.MultiKeyColumnSection.getKeyData(view,view.typeinfo.data.fields.keys);
+           var tableKey=  new elx.MultiKeyColumnSection("typeinfo-property-keys","typeinfo-property", view, dataKey);
+      $("#typeinfo-property-keys").data("table",tableKey);
+            var dataOps =  elx.utils.getElxChartOperablesData(view, view.typeinfo.data.fields.operable.values);
+   		var tableOp = new elx.MultiChartValueColumnSection("typeinfo-data-fields-operable-values-table",
+                                                        "typeinfo-data-fields-operable-values", view, dataOps);
+		$("#typeinfo-data-fields-operable-values-table").data("table",tableOp);
+      elx.host.utils.initSectionGroups(view,$("#SparkChart-div"));
+        $("#typeinfo-data-cToggleTypeCol").val(view.typeinfo.data.fields.cToggleTypeCol[0].name);
+      
+	},
+
+	validate : function(view) {
+		return true;
+	},
+
+	save : function(view) {
+		var dataTableOp = $("#typeinfo-data-fields-operable-values-table").data("table");
+       var dataOp = dataTableOp.table.getData();
+          view.typeinfo.data.fields.operable.values = 
+          elx.utils.buildElxChartOperablesData(view.typeinfo.data.fields.operable.values,dataOp);
+      
+	   var dataTableKey = $("#typeinfo-property-keys").data("table");
+        var dataKey = dataTableKey.table.getData();
+        view.typeinfo.data.fields.keys = elx.MultiKeyColumnSection.buildKeyData(dataKey);
+ 
+		elx.host.utils.saveProperties(view.typeinfo);
+      
+           	var dToggleType = $("#typeinfo-data-cToggleTypeCol").val();
+		view.typeinfo.data.fields.cToggleTypeCol[0].name = dToggleType;
+}
+}
+========
+<<<<<<<=view-html=
 <style type='text/css'>
 #${id}_result {	text-align: right;color: gray;min-height: 2em;} #${id}_table-sparkline {margin: 0 auto;border-collapse: collapse;}
 #${id}_th {font-weight: bold;text-align: center;padding: 5px;    border-bottom: 1px solid silver;height: 20px;border-top: 2px solid gray;border-bottom: 2px solid gray;}
@@ -667,7 +1552,7 @@ chartGen=function(toCategoryArray){
     // Creating 153 sparkline charts is quite fast in modern browsers, but IE8 and mobile
     // can take some seconds, so we split the input into chunks and apply them in timeouts
     // in order avoid locking up the browser process and allow interaction.
-    function doChunk(toCategoryArray) {
+    function doChunk(toCategoryArray,valueDecimals,valuePrefix,valueSuffix) {
 	console.log("jess toCategoryArray",toCategoryArray);
         var time = +new Date(),
             i,
@@ -694,9 +1579,9 @@ chartGen=function(toCategoryArray){
                     data: data
                 }],
                 tooltip:{
-				  valueDecimals: 2,
-            valuePrefix: '$',
-            valueSuffix: ' USD'
+				  valueDecimals: valueDecimals,
+            valuePrefix: valuePrefix,
+            valueSuffix: valueSuffix
 	
                 },
 				
@@ -718,7 +1603,7 @@ chartGen=function(toCategoryArray){
             }
         }
     }
-    doChunk(toCategoryArray);
+    doChunk(toCategoryArray,valueDecimals,valuePrefix,valueSuffix);
     
 
 };
@@ -1092,3 +1977,4 @@ function sum(arr) {
     }, 0) / arr.length,2);
 };
 </div>
+========
