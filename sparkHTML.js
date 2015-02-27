@@ -667,7 +667,7 @@ chartGen=function(toCategoryArray){
     // Creating 153 sparkline charts is quite fast in modern browsers, but IE8 and mobile
     // can take some seconds, so we split the input into chunks and apply them in timeouts
     // in order avoid locking up the browser process and allow interaction.
-    function doChunk(toCategoryArray) {
+    function doChunk(toCategoryArray,valueDecimals,valuePrefix,valueSuffix) {
 	console.log("jess toCategoryArray",toCategoryArray);
         var time = +new Date(),
             i,
@@ -694,9 +694,9 @@ chartGen=function(toCategoryArray){
                     data: data
                 }],
                 tooltip:{
-				  valueDecimals: 2,
-            valuePrefix: '$',
-            valueSuffix: ' USD'
+				  valueDecimals: valueDecimals,
+            valuePrefix: valuePrefix,
+            valueSuffix: valueSuffix
 	
                 },
 				
@@ -718,7 +718,7 @@ chartGen=function(toCategoryArray){
             }
         }
     }
-    doChunk(toCategoryArray);
+    doChunk(toCategoryArray,valueDecimals,valuePrefix,valueSuffix);
     
 
 };

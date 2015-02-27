@@ -112,7 +112,7 @@
               "name":"Income",
               "op":"sum"
             },{
-              "id":"spline.2",
+              "id":"pie.2",
               "name":"Cost",
               "op":"sum"
             },{
@@ -143,7 +143,9 @@
        "orderingKey":"monthString",
       "valueDecimals":"2",
       "valuePrefix":"$",
-      "valueSuffix":"USD"
+      "valueSuffix":"USD",
+      "layoutClassKey":"layoutClassCast",
+      "layoutClassCast":"layoutClass={1:{'text':true,'chart':true},2:{'text':true,'chart':true}}"
       }
   },
   "includes":["/elx/lib/highcharts.js","/elx/lib/Accent2.js","/elx/lib/multiSelectCustom.js"],
@@ -840,6 +842,58 @@
 				   ]
 				}
 			 ]
+		  },{
+			 "jsonClass":"Group",
+			 "label":",Layout Class",
+			 "rows":[
+				{
+				   "jsonClass":"Row",
+				   "cols":[
+					  {
+						 "jsonClass":"Label",
+						 "id":"typeinfo-layoutClassKey-label",
+						 "type":"label",
+						 "text":" Layout Class Key"
+					  },
+					  {
+						 "jsonClass":"Select",
+						 "id":"typeinfo-layoutClassKey",
+						 "type":"select",
+						 "value":"${typeinfo.layoutClassKey}",
+						 "options":[
+							{
+							   "jsonClass":"Option",
+							   "text":"default",
+							   "value":"default"
+							},
+							{
+							   "jsonClass":"Option",
+							   "text":"Format layout Class",
+							   "value":"layoutClassCast"
+							}
+						 ]
+					  }
+				   ]
+				},
+				{
+				   "jsonClass":"Row",
+				   "cols":[
+					  {
+						 "jsonClass":"Label",
+						 "id":"typeinfo-layoutClassCast-label",
+						 "type":"label",
+						 "text":"Format layout Class"
+					  },
+					  {
+						 "jsonClass":"Field",
+						 "id":"typeinfo-layoutClassCast",
+						 "type":"field",
+						 "value":"${typeinfo.layoutClassCast}",
+						 "readonly":false
+					  }
+				   ]
+				}
+			 ]
 		  }
 		  
 	   ]
@@ -914,6 +968,8 @@ var formatOrderingCast=view.typeinfo.formatOrderingCast;
 var valuePrefix=view.typeinfo.valuePrefix;
 var valueSuffix=view.typeinfo.valueSuffix;
 var valueDecimals=view.typeinfo.valueDecimals;
+var layoutClassKey=view.typeinfo.layoutClassKey;
+var layoutClassCast=view.typeinfo.layoutClassCast;
 
 	  var keys=[];
 	k.forEach(function(d,i) {
@@ -967,13 +1023,9 @@ var valueDecimals=view.typeinfo.valueDecimals;
   
   console.log("rawdata",JSON.stringify(rawdata));
  var data1 = arrToHex1(reduceCToggleArr, f, view);
- console.log("data1",JSON.stringify(data1));
   var data2 = hexToModel1(data1, legendKey,formatLegendCast,view);
-   console.log("data2",JSON.stringify(data2));
-   
+ 
    addDataGroupFn(data2, 'category', dataGroupKey, '#dataGroup_' + viewId, viewId);
-  
-  
   
   
   function debugFn(){
@@ -984,7 +1036,6 @@ var valueDecimals=view.typeinfo.valueDecimals;
 		var uniqColName=[];
 		var fieldsArr=getArr(f,'name',view);
 		  //if(view.typeinfo.cToggleKey=='default') fieldsArr=_.rest(fieldsArr);
-		console.log("fieldsArr",fieldsArr);
 		var n=0;  //n is the index of unextended Arr
 		for(var i=0;i< _.size(fieldsArr);i++){
 		var colAsProperty =fieldsArr[i];
@@ -1087,13 +1138,13 @@ var valueDecimals=view.typeinfo.valueDecimals;
       idArr.forEach(function(d, i) {
           propertiesArr.push("#[" + d + "]");
       })
-      console.log("propertiess", JSON.stringify(propertiesArr));
+  
       var combineArr = [];
       propertiesArr.forEach(function(d, i) {
           var obj = nameArr[i] + d;
           combineArr.push(obj);
       })
-      console.log("combineArrAS", JSON.stringify(combineArr));
+
       var globalArr = [];
       data.forEach(function(d, i) {
           var localObj = _.object(combineArr, d);
@@ -1335,13 +1386,13 @@ var objPushCount=0;
   return date instanceof Date && !isNaN(date.valueOf());
        },
   "month":function(d) { var date=new Date(d+" 2,2014");
-  console.log("date",date);
+
   return date instanceof Date && !isNaN(date.valueOf());}
   };
   interpolateData=function(data5,tDomainDate) {
 var yearFormat=d3.time.format("%Y");
 			var minYear=yearFormat(tDomainDate[0]); 
-			console.log("minYear",minYear);
+		
 			var maxYear= yearFormat(tDomainDate[1]);
 			var yearRange=_.range(parseInt(minYear),(parseInt(maxYear)+1));
 			console.log("yearRange:",yearRange, "subPeriodSelect_val:", subPeriodSelect_val);
@@ -1361,13 +1412,13 @@ var yearFormat=d3.time.format("%Y");
 			.rollup(function(d,i) { 
 			var existingCategory=_.uniq(_.pluck(d,'category'));
 			var differenceCategory=_.difference(periodInterpolateClass[periodSelect_val](yearRange,subPeriodSelect_val),existingCategory);
-			console.log("beef differenceCategory",differenceCategory);
+		
 			
 			
 			var interpolatedData=[];
 			_.each(differenceCategory,function(m){
 			var sampleObj=_.clone(d[0]);
-			console.log("beef sampleObj",sampleObj,"m:",m);
+			
 			sampleObj['category']=m;
 			sampleObj['value']=0;
 			sampleObj['tColSubPeriod']=(_.str.include(m,'-')) ? m.split("-")[1] :m;
@@ -1375,8 +1426,7 @@ var yearFormat=d3.time.format("%Y");
 			});
 			
 			result=_.union(result,interpolatedData);
-			console.log("teef interpolatedData",JSON.stringify(interpolatedData));
-			console.log("teef result",JSON.stringify(result));
+			
 			})
 			.entries(data5);
 			return result;
@@ -1391,13 +1441,11 @@ var data4=[];
 						data4.push(sampleObj);
 					 }).entries(data3);
 		  var data5=interpolateData(data4,tDomainDate);
-		    console.log("data5",JSON.stringify(data5));
+	
 	  var data6=formatXTicksAndOrdering(data5,view);
 		
-		
-		  console.log("data6",JSON.stringify(data6));
 			var data7=sortCategory(data6);
-			console.log("data7",JSON.stringify(data7));
+	
 	//Append preparation
 
 //[{"model":"spline","yAxis":"1","columnName":"sum(Income)","columnNameWithoutOp":"Income","opName":"sum","value":116,"category":"2014-Jan","groupby1":"Alabama","legendKey":"Alabama_sum(Income)","tColSubPeriod":"Jan"}]		
@@ -1421,8 +1469,7 @@ var toCategoryArray;
 	if(colPropertyCount==0) toCategoryArray=_.pluck(sparkNest[propertyName][colProperty],'category');
 	}
 	}
-console.log("teef sparkNest",JSON.stringify(sparkNest));		
-console.log("teef chartObj",JSON.stringify(chartObj));	
+	
 //
 					
 //append to the selector
@@ -1431,8 +1478,10 @@ var table_Spark=d3.select('#${id}_table-sparkline');
 var table_Body=table_Spark.append("tbody").attr("id",viewId+'_tbody-sparkline');
 var table_Head=table_Spark.append("thead").attr("id",viewId+'_thead_th').append('tr');
 
-
-
+//Consider layoutClass
+var layoutClass;
+if(layoutClassKey=='default') { layoutClass={1:{'text':true,'chart':true}};}
+else if (layoutClassKey=='layoutClassCast') eval(layoutClassCast);
 
 var nRowsArr=[];
 var nRowsNest=d3.nest().key(function(d,i) {return d.groupby1;}).rollup(function(d,i) {nRowsArr.push(d[0].groupby1);}).entries(data7);
@@ -1445,8 +1494,11 @@ var valueObj=formatTextValueObj(chartObj,textValueKey,formatTextValueCast);
 var firstChartProperty=nRowsArr[0];
 _.each(nRowsArr,function(d,i) {
 var bodyTag = table_Body.select('#bodyTag'+d);
-	_.each(valueObj[d],function(m,n) { bodyTag.append("td").attr("id","${id}_td").text(m);
-	bodyTag.append("td").attr("id","${id}_td").attr("data-sparkline",chartObj[d]['data'][n].join(" ,")+chartObj[d]['chartType'][n])
+	_.each(valueObj[d],function(m,n) { 
+	if(layoutClass[chartObj[d]['yAxis'][n]]['text']==true || layoutClassKey=='default') 
+	bodyTag.append("td").attr("id","${id}_td").text(m);
+	if(layoutClass[chartObj[d]['yAxis'][n]]['chart']==true || layoutClassKey=='default') 
+	bodyTag.append("td").attr("id","${id}_td").attr("data-sparkline",chartObj[d]['data'][n].join(" ,")+' ; '+chartObj[d]['chartType'][n])
 						.attr("name",d);
 	});
 });
@@ -1553,7 +1605,7 @@ chartGen=function(toCategoryArray){
     // can take some seconds, so we split the input into chunks and apply them in timeouts
     // in order avoid locking up the browser process and allow interaction.
     function doChunk(toCategoryArray,valueDecimals,valuePrefix,valueSuffix) {
-	console.log("jess toCategoryArray",toCategoryArray);
+	
         var time = +new Date(),
             i,
             len = $tds.length;
@@ -1566,27 +1618,77 @@ chartGen=function(toCategoryArray){
                 data = $.map(arr[0].split(' ,'), parseFloat),
 				
                 chart = {};
-
+			console.log("stringdata",stringdata);
             if (arr[1]) {
                 chart.type = arr[1];
             }
-            $td.highcharts('SparkLine', {
-			xAxis:{
-			categories:toCategoryArray
-			},
+  console.log("chart.type",chart.type);
+  console.log("toCategoryArray",toCategoryArray);
+  console.log("data",data);
+ 
+  var pieData=[];
+  _.each(toCategoryArray,function(d,i) {
+  pieData.push([d,data[i]]);
+  });
+   console.log("piedata",pieData);
+				var chartObjForNotPie={
+				xAxis:{
+				categories:toCategoryArray
+				},
                 series: [{
 				name:name,
-                    data: data
+                    data: data,
+                
                 }],
-                tooltip:{
-				  valueDecimals: valueDecimals,
+                tooltip: {
+                     valueDecimals: valueDecimals,
             valuePrefix: valuePrefix,
             valueSuffix: valueSuffix
-	
                 },
-				
                 chart: chart
-            });
+            };
+			var chartObjPie=	{  
+			chart: { },
+        title: {        },
+        tooltip: {
+    	    pointFormat: '{series.name}: <b>{point.percentage:.1f}%</b>'
+        },
+        plotOptions: {
+            pie: {
+                allowPointSelect: true,
+                cursor: 'pointer',
+                dataLabels: {
+                    enabled: false,
+                    format: '<b>{point.name}</b>: {point.percentage:.1f} %',
+                    style: {
+                        color: 'black'
+                    }
+                }
+            }
+        },   series: [{
+            type: 'pie',
+           name:name,
+            data: pieData
+			/*[
+                ['Firefox',   45.0],
+                ['IE',       26.8],
+                {
+                    name: 'Chrome',
+                    y: 12.8,
+                    sliced: false,
+                    selected: true
+                },
+                ['Safari',    8.5],
+                ['Opera',     6.2],
+                ['Others',   0.7]
+            ]
+			*/
+			,size:29
+        }],
+
+		};
+			var chartObj=(chart.type =='pie') ? chartObjPie: chartObjForNotPie;
+            $td.highcharts('SparkLine', chartObj);
 
             n++;
             
@@ -1649,7 +1751,7 @@ for (var i=0;i < _.size(vObj[firstABargument]);i++) {
 		});
 	
 	}
-		//console.log("sampleObj",JSON.stringify(sampleObj));
+	
 	return vObj['processedValue'];
 
 };
@@ -1681,8 +1783,7 @@ valueOperating=function(modelData,valueOperationKey,formatValueOperationCast){
     addDataGroupFn = function(modelData, tCol, dataGroupKey, dataGroupHex, viewId) {
 		console.log("dataGroupKey",dataGroupKey);
 		      var tDomainDate = setTDomain1(modelData, tCol);
-			console.log("tDomainDate",tDomainDate);
-        if (dataGroupKey === 'timePeriodOptions') {
+			        if (dataGroupKey === 'timePeriodOptions') {
 			
             var dataGroupContent = d3.select(dataGroupHex);
             dataGroupContent.append("td")
@@ -1694,7 +1795,7 @@ valueOperating=function(modelData,valueOperationKey,formatValueOperationCast){
 			
       
             var periodSelect_hex = '#periodSelect_' + viewId;
-			console.log("front periodSelect_el",$(periodSelect_hex));
+		
             var subPeriodSelect_hex = '#subPeriodSelect_' + viewId;
             addSubPeriodOptions(modelData, tDomainDate, tCol, 'month', subPeriodSelect_hex);
             periodSelect_el = $(periodSelect_hex).multiselect({
@@ -1725,15 +1826,13 @@ valueOperating=function(modelData,valueOperationKey,formatValueOperationCast){
 	//reassign orderingKey
 	
 	orderingKey='year-'+periodSelect_val;
-	console.log("orderingKey in dataGroupUsed",orderingKey);
-        var periodFilterClass = {
+	        var periodFilterClass = {
             'month': function(date) {
                 var monthFormat = d3.time.format("%b");
                 return monthFormat(date);
             },
             'year': function(date) {
-                console.log("now is year", date.getFullYear());
-                return date.getFullYear();
+                             return date.getFullYear();
 
             },
             'quarter': function(date) {
@@ -1746,7 +1845,7 @@ valueOperating=function(modelData,valueOperationKey,formatValueOperationCast){
                 return monthFormat(date);
             },
             'year': function(date) {
-                console.log("now is year", date.getFullYear());
+               
                 return date.getFullYear();
 
             },
@@ -1811,13 +1910,11 @@ valueOperating=function(modelData,valueOperationKey,formatValueOperationCast){
         subPeriodSelect_el = $(subPeriodSelect_hex).multiselect({
 
             selectedText: function(numChecked, numTotal, checkedItems) {
-			console.log("help");
-                subPeriodSelect_val = $.map(checkedItems, function(checkbox) {
+		           subPeriodSelect_val = $.map(checkedItems, function(checkbox) {
                     return checkbox.value;
                 });
                 console.log("subPeriodSelect_val _sel", subPeriodSelect_val);
-                console.log("jok modelData",JSON.stringify(modelData));
-                var groupedData = dataGroupUsed(modelData, tCol,subPeriodSelect_val); //data filtered by subPeriodselected_val
+                  var groupedData = dataGroupUsed(modelData, tCol,subPeriodSelect_val); //data filtered by subPeriodselected_val
 				 groupedData=valueOperating(groupedData,valueOperationKey,formatValueOperationCast);
 				
 				 if (_.size(groupedData)==0) groupedData =[{model:'column',category:'2012-06-20',yAxis:'L1'}];
