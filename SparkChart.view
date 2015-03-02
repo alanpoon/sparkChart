@@ -1019,12 +1019,11 @@ var layoutClassCast=view.typeinfo.layoutClassCast;
   ["Type2","2014-07-20","Alaska",710,680,30],
   ["Type2","2014-10-20","Alaska",450,280,20]
 ];
- 
- // rawdata=reduceCToggle(rawdata,view);
+
   var extendedArr=rawdata;
   var reduceCToggleArr=extendedArr;
   } else { rawdata=${data};  var extendedArr=extendArr(rawdata,f,view);
-//  var reduceCToggleArr=reduceCToggle(extendedArr,view);
+
 }
   
   console.log("rawdata",JSON.stringify(rawdata));
@@ -1077,16 +1076,7 @@ var layoutClassCast=view.typeinfo.layoutClassCast;
 		return extendedArr;
 	
 	};
-   reduceCToggle = function(data,view) { //remove the first element of all entries if cToggleKey is default
-	var newData=[];
-	  if(view.typeinfo.cToggleKey=='default') {
-	  _.each(data,function(d){
-	  newData.push(_.rest(d));
-	  });
-	  return newData;
-	  } else return data;
-  
-  };
+
   arrToHex1 = function(data, f,view){
 	  var keyLength = f.keys.length;
       var nameArr = getArr(f, 'name',view);
