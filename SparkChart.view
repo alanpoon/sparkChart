@@ -85,7 +85,7 @@
         }
       },
       "hint":"directive-data-array",
-      "directive":"ZnVuY3Rpb24gZGF0YSgpew0KdmFyIGNUb2dnbGVUeXBlPXZpZXcudHlwZWluZm8uZGF0YS5maWVsZHMuY1RvZ2dsZVR5cGVDb2w7DQogICAgdmFyIHQ9dmlldy50eXBlaW5mby5kYXRhLmZpZWxkcy5vcGVyYWJsZS52YWx1ZXM7DQogIAl2YXIgaz12aWV3LnR5cGVpbmZvLmRhdGEuZmllbGRzLmtleXM7DQoNCiAgdmFyIGNvbHVtbnM9W107IHZhciBvcGVyYXRpb25zPVtdOyB2YXIga2V5cz1bXTsNCiAga2V5cy5wdXNoKGNUb2dnbGVUeXBlWzBdLm5hbWUpOw0KICB0LmZvckVhY2goZnVuY3Rpb24oZCxpKSB7DQogIGNvbHVtbnMucHVzaChkLm5hbWUpOw0KICAgIG9wZXJhdGlvbnMucHVzaChkLm9wKTsNCiAgfSkNCiAgay5mb3JFYWNoKGZ1bmN0aW9uKGQsaSkgew0KICAgIGtleXMucHVzaChkLm5hbWUpO30pDQogICByZXR1cm4gcm93cy5ncm91cEJ5KGtleXMsY29sdW1ucywgb3BlcmF0aW9ucyk7DQp9DQpkYXRhKCk7"
+      "directive":"ZnVuY3Rpb24gZGF0YSgpew0KdmFyIGNUb2dnbGVUeXBlPXZpZXcudHlwZWluZm8uZGF0YS5maWVsZHMuY1RvZ2dsZVR5cGVDb2w7DQogICAgdmFyIHQ9dmlldy50eXBlaW5mby5kYXRhLmZpZWxkcy5vcGVyYWJsZS52YWx1ZXM7DQogIAl2YXIgaz12aWV3LnR5cGVpbmZvLmRhdGEuZmllbGRzLmtleXM7DQoNCiAgdmFyIGNvbHVtbnM9W107IHZhciBvcGVyYXRpb25zPVtdOyB2YXIga2V5cz1bXTsNCiBpZihjVG9nZ2xlVHlwZVswXS5uYW1lICE9bnVsbCAmJiB2aWV3LnR5cGVpbmZvLmNUb2dnbGVLZXkhPSdkZWZhdWx0JykNCiB7a2V5cy5wdXNoKGNUb2dnbGVUeXBlWzBdLm5hbWUpO30NCiAgdC5mb3JFYWNoKGZ1bmN0aW9uKGQsaSkgew0KICBjb2x1bW5zLnB1c2goZC5uYW1lKTsNCiAgICBvcGVyYXRpb25zLnB1c2goZC5vcCk7DQogIH0pDQogIGsuZm9yRWFjaChmdW5jdGlvbihkLGkpIHsNCiAgICBrZXlzLnB1c2goZC5uYW1lKTt9KQ0KICAgcmV0dXJuIHJvd3MuZ3JvdXBCeShrZXlzLGNvbHVtbnMsIG9wZXJhdGlvbnMpOw0KfQ0KZGF0YSgpOw=="
     },
     "typeinfo":{
       "jsonClass":"Bundle",
@@ -811,8 +811,12 @@
 						 "options":[
 							{
 							   "jsonClass":"Option",
-							   "text":"default",
-							   "value":"default"
+							   "text":"sum",
+							   "value":"sum"
+							},	{
+							   "jsonClass":"Option",
+							   "text":"average",
+							   "value":"average"
 							},
 							{
 							   "jsonClass":"Option",
@@ -1016,13 +1020,16 @@ var layoutClassCast=view.typeinfo.layoutClassCast;
   ["Type2","2014-10-20","Alaska",450,280,20]
 ];
  
-  rawdata=reduceCToggle(rawdata,view);
+ // rawdata=reduceCToggle(rawdata,view);
   var extendedArr=rawdata;
   var reduceCToggleArr=extendedArr;
-  } else { rawdata=${data};  var extendedArr=extendArr(rawdata,f,view); var reduceCToggleArr=reduceCToggle(extendedArr,view);}
+  } else { rawdata=${data};  var extendedArr=extendArr(rawdata,f,view);
+//  var reduceCToggleArr=reduceCToggle(extendedArr,view);
+}
   
   console.log("rawdata",JSON.stringify(rawdata));
- var data1 = arrToHex1(reduceCToggleArr, f, view);
+ var data1 = arrToHex1(extendedArr, f, view);
+ console.log("data1",JSON.stringify(data1));
   var data2 = hexToModel1(data1, legendKey,formatLegendCast,view);
  
    addDataGroupFn(data2, 'category', dataGroupKey, '#dataGroup_' + viewId, viewId);
@@ -1035,7 +1042,7 @@ var layoutClassCast=view.typeinfo.layoutClassCast;
 		var colNameMap={};
 		var uniqColName=[];
 		var fieldsArr=getArr(f,'name',view);
-		  //if(view.typeinfo.cToggleKey=='default') fieldsArr=_.rest(fieldsArr);
+	
 		var n=0;  //n is the index of unextended Arr
 		for(var i=0;i< _.size(fieldsArr);i++){
 		var colAsProperty =fieldsArr[i];
@@ -1088,7 +1095,8 @@ var layoutClassCast=view.typeinfo.layoutClassCast;
 	      
   
 	         var propertiesArr = [];
-  if(view.typeinfo.cToggleKey =='cToggleEnabled'){ //cToggle Toggle the chart based on eikon filter
+			 console.log("typeof view.typeinfo.data.fields.cToggleTypeCol[0].name",view.typeinfo.data.fields.cToggleTypeCol[0].name);
+  if(view.typeinfo.cToggleKey =='cToggleEnabled' &&  view.typeinfo.data.fields.cToggleTypeCol[0].name!=null){ //cToggle Toggle the chart based on eikon filter
   //Console.log a existing cToggleType
   var cToggleTypeMaj=[];
   _.each(data,function(d) { cToggleTypeMaj.push(d[0]);});
@@ -1118,9 +1126,8 @@ var layoutClassCast=view.typeinfo.layoutClassCast;
           var obj = (i == 0) ? '#{cToggle}': (i == 1)?'#{xaxis}' : '#{groupby' + (i-1) + '}';
           propertiesArr.push(obj);
       })
-  } else if(view.typeinfo.cToggleKey =='default')
+  } else if(view.typeinfo.cToggleKey =='default' ||  view.typeinfo.data.fields.cToggleTypeCol[0].name==null)
    {
-		nameArr=_.rest(nameArr); //remove the first element which is the cToggleType
 		var keyArr = _.first(nameArr, keyLength);
          var colArr = _.last(nameArr, nameArr.length - keyLength);
 		 console.log("keyArr: ",keyArr,"  , colArr",colArr);
@@ -1413,8 +1420,6 @@ var yearFormat=d3.time.format("%Y");
 			var existingCategory=_.uniq(_.pluck(d,'category'));
 			var differenceCategory=_.difference(periodInterpolateClass[periodSelect_val](yearRange,subPeriodSelect_val),existingCategory);
 		
-			
-			
 			var interpolatedData=[];
 			_.each(differenceCategory,function(m){
 			var sampleObj=_.clone(d[0]);
