@@ -1079,6 +1079,7 @@ var layoutClassCast=view.typeinfo.layoutClassCast;
 
   arrToHex1 = function(data, f,view){
 	  var keyLength = f.keys.length;
+  console.log("keyLength",f.keys);
       var nameArr = getArr(f, 'name',view);
       var opArr = getArr(f, 'op',view);
       var idArr = getArr(f, 'id',view);
