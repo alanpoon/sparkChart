@@ -145,7 +145,9 @@
       "valuePrefix":"$",
       "valueSuffix":"USD",
       "layoutClassKey":"layoutClassCast",
-      "layoutClassCast":"layoutClass={1:{'text':true,'chart':true,'multiDataAttr':true},2:{'text':true,'chart':true,'multiDataAttr':false}}"
+      "layoutClassCast":"layoutClass={1:{'text':true,'chart':true,'multiDataAttr':true,'thisPeriod':'thisMonth'},2:{'text':true,'chart':true,'multiDataAttr':false,'thisPeriod':'thisMonth'}}",
+      "setThisDateKey":"setThisDateCast",
+      "setThisDateCast":"2014-10-10"
       }
   },
   "includes":["/elx/lib/highcharts.js","/elx/lib/Accent2.js","/elx/lib/multiSelectCustom.js"],
@@ -848,7 +850,7 @@
 			 ]
 		  },{
 			 "jsonClass":"Group",
-			 "label":",Layout Class",
+			 "label":"Layout Class",
 			 "rows":[
 				{
 				   "jsonClass":"Row",
@@ -893,6 +895,58 @@
 						 "id":"typeinfo-layoutClassCast",
 						 "type":"field",
 						 "value":"${typeinfo.layoutClassCast}",
+						 "readonly":false
+					  }
+				   ]
+				}
+			 ]
+		  },{
+			 "jsonClass":"Group",
+			 "label":"Set This Date",
+			 "rows":[
+				{
+				   "jsonClass":"Row",
+				   "cols":[
+					  {
+						 "jsonClass":"Label",
+						 "id":"typeinfo-setThisDateKey-label",
+						 "type":"label",
+						 "text":"Select Options"
+					  },
+					  {
+						 "jsonClass":"Select",
+						 "id":"typeinfo-setThisDateKey",
+						 "type":"select",
+						 "value":"${typeinfo.setThisDateKey}",
+						 "options":[
+							{
+							   "jsonClass":"Option",
+							   "text":"default",
+							   "value":"default"
+							},
+							{
+							   "jsonClass":"Option",
+							   "text":"Set This Date",
+							   "value":"setThisDateCast"
+							}
+						 ]
+					  }
+				   ]
+				},
+				{
+				   "jsonClass":"Row",
+				   "cols":[
+					  {
+						 "jsonClass":"Label",
+						 "id":"typeinfo-setThisDateCast-label",
+						 "type":"label",
+						 "text":"Set This Date Key as current Date"
+					  },
+					  {
+						 "jsonClass":"Field",
+						 "id":"typeinfo-setThisDateCast",
+						 "type":"field",
+						 "value":"${typeinfo.setThisDateCast}",
 						 "readonly":false
 					  }
 				   ]
@@ -975,6 +1029,8 @@ var valueSuffix = view.typeinfo.valueSuffix;
 var valueDecimals = view.typeinfo.valueDecimals;
 var layoutClassKey = view.typeinfo.layoutClassKey;
 var layoutClassCast = view.typeinfo.layoutClassCast;
+var setThisDateKey= view.typeinfo.setThisDateKey;
+var setThisDateCast = view.typeinfo.setThisDateCast;
 
 var keys = [];
 k.forEach(function(d, i) {
@@ -1034,7 +1090,7 @@ if (view.data.jsonClass === "DataEmbedded") {
 
 console.log("rawdata", JSON.stringify(rawdata));
 var data1 = arrToHex1(extendedArr, f, view);
-console.log("data1", JSON.stringify(data1));
+
 var data2 = hexToModel1(data1, legendKey, formatLegendCast, view);
    //Consider layoutClass
         var layoutClass;
@@ -1043,11 +1099,19 @@ var data2 = hexToModel1(data1, legendKey, formatLegendCast, view);
                 1: {
                     'text': true,
                     'chart': true,
-					'multiDataAttr': false
+					'multiDataAttr': false,
+					'thisPeriod':'thisMonth'
                 }
             };
         } else if (layoutClassKey == 'layoutClassCast') eval(layoutClassCast);
 		console.log('layoutClass: ',layoutClass);
+		console.log("data2", JSON.stringify(data2[0]));
+		var data2=filterDataByLayout(data2,layoutClass,setThisDateKey,setThisDateCast);
+	     if (_.size(data2) == 0) {data2 = [{
+                    model: 'column',
+                    category: setThisDateCast,
+                    yAxis: '1',value:0
+                }];}
 addDataGroupFn(data2, 'category', dataGroupKey, '#dataGroup_' + viewId, viewId);
 
 
@@ -1302,7 +1366,7 @@ function debugFn() {
     formatXTicksAndOrdering = function(modelData, view) {
         //Data preProcess
         var formatScale;
-        var testArray = ["2012-11-25", "Jan", "Peter", "Jan-2014"];
+        //var testArray = ["2012-11-25", "Jan", "Peter", "Jan-2014"];
         var sampleCategory = modelData[0].category;
         var autoDetectArray = ['parsableDate', 'month'];
         var detected;
@@ -1518,12 +1582,14 @@ function debugFn() {
                 sampleObj['value'] = sumValue;
                 data4.push(sampleObj);
             }).entries(data3);
+		console.log('data4: ',JSON.stringify(_.first(data4,3)));
         var data5 = interpolateData(data4, tDomainDate);
-
+		console.log('data5: ',JSON.stringify(_.first(data5,3)));
         var data6 = formatXTicksAndOrdering(data5, view);
-
+		console.log('data6: ',JSON.stringify(_.first(data6,3)));
         var data7 = sortCategory(data6);
-
+		
+		console.log('data7',JSON.stringify(data7));
         //Append preparation
 
         //[{"model":"spline","yAxis":"1","columnName":"sum(Income)","columnNameWithoutOp":"Income","opName":"sum","value":116,"category":"2014-Jan","groupby1":"Alabama","legendKey":"Alabama_sum(Income)","tColSubPeriod":"Jan"}]		
@@ -1531,7 +1597,7 @@ function debugFn() {
                 return d.groupby1;
             })
             .key(function(d, i) {
-                return d.columnName;
+                return d.columnName +'_'+d.yAxis;
             })
             .map(data7, d3.map);
         //first colProperty
@@ -1551,7 +1617,6 @@ function debugFn() {
 				var yAxisVal=sparkNest[propertyName][colProperty][0]['yAxis'];
 				if(_.has(mapCol,yAxisVal)) { //mapCol Contains
 				var arr = _.pluck(sparkNest[propertyName][colProperty], 'value');
-				chartObj[propertyName][mapCol[yAxisVal]]={'data':[],'chartType':[],'yAxis':[]};
 				chartObj[propertyName][mapCol[yAxisVal]]['data'].push(arr);
 				 var chartModel = sparkNest[propertyName][colProperty][0]['model'];
                 chartObj[propertyName][mapCol[yAxisVal]]['chartType'].push(chartModel);
@@ -1594,7 +1659,7 @@ function debugFn() {
                
             }
         }
-
+		console.log('mapCol',mapCol);
         //
 
         //append to the selector
@@ -1620,18 +1685,19 @@ function debugFn() {
         });
 
         var valueObj = formatTextValueObj(chartObj, textValueKey, formatTextValueCast);
+		console.log('chartObj',chartObj);
         var firstChartProperty = nRowsArr[0];
         _.each(nRowsArr, function(r, i) {
             var bodyTag = table_Body.select('#bodyTag' + r);
 			for (var colProperty in valueObj[r]){
-				if (layoutClass[chartObj[r][colProperty]['yAxis']]['text'] == true || layoutClassKey == 'default')
-                    bodyTag.append("td").attr("id", "${id}_td").text(r);
-				 if (layoutClass[chartObj[r][colProperty]['yAxis']]['chart'] == true || layoutClassKey == 'default'){
+				if (layoutClass[chartObj[r][colProperty]['yAxis'][0]]['text'] == true || layoutClassKey == 'default')
+                    bodyTag.append("td").attr("id", "${id}_td").text(valueObj[r][colProperty]['data']);
+				 if (layoutClass[chartObj[r][colProperty]['yAxis'][0]]['chart'] == true || layoutClassKey == 'default'){
 				 var assignedElement=bodyTag.append("td").attr("id","${id}_td").attr("t_o",'spark').attr("name",r);
 					_.each(chartObj[r][colProperty]['data'],function(m,n){
 						var l=n+1;
 						console.log('what is m?: ',m);
-						assignedElement.attr("data-sparkline"+l,m.join(" ,") +' ; ' + chartObj[r][colProperty]['chartType']);
+						assignedElement.attr("data-sparkline"+l,m.join(" ,") +' ; ' + chartObj[r][colProperty]['chartType'][n]);
 					});
 					assignedElement.attr("data-tocategory",chartObj[r][colProperty]['toCategory'].join(" ,")+' ; ');
 				 }
@@ -1754,7 +1820,7 @@ function debugFn() {
                 var dataNumArr = [];
                 _.each($td[0].attributes, function(d, n) {
 
-                    if (d.name.includes('data-sparkline')) {
+                    if (_.str.include(d.name,'data-sparkline')) {
                         dataNumArr.push(d.name);
                     }
                 });
@@ -1767,7 +1833,7 @@ function debugFn() {
 					
                     var name = $td.attr('name');
                     arr = stringData.split('; ');
-                    data = $.map(arr[0].split(', '), parseFloat);
+                    data = $.map(arr[0].split(' ,'), parseFloat);
                     toSeriesArr.push({
                         name: name,
                         data: data,
@@ -1776,7 +1842,8 @@ function debugFn() {
 					if(n==0) {var catData =  $td.data('tocategory');
 					console.log('catData',catData);
 					var catArr=catData.split('; ');
-					toCategoryArray = $.map(catArr[0].split(', '), parseFloat); }
+					toCategoryArray = catArr[0].split(' ,'); 
+					console.log('toCategoryArray',toCategoryArray);}
                 })
                 if (i < 3) console.log('toSeries', JSON.stringify(toSeriesArr));
 
@@ -2071,8 +2138,8 @@ function debugFn() {
 
                 if (_.size(groupedData) == 0) groupedData = [{
                     model: 'column',
-                    category: '2012-06-20',
-                    yAxis: 'L1'
+                    category: setThisDateCast,
+                    yAxis: '1'
                 }];
                 chartPreGen(groupedData, tDomainDate);
 
@@ -2085,8 +2152,8 @@ function debugFn() {
                 groupedData = valueOperating(groupedData, valueOperationKey, formatValueOperationCast);
                 if (_.size(groupedData) == 0) groupedData = [{
                     model: 'column',
-                    category: '2012-06-20',
-                    yAxis: 'L1'
+                    category: setThisDateCast,
+                    yAxis: '1'
                 }];
                 chartPreGen(groupedData, tDomainDate);
 
@@ -2166,8 +2233,9 @@ function debugFn() {
                 valueObj[propertyName] = {};
 				for (var colProperty in chartObj[propertyName]) {
 					valueObj[propertyName][colProperty]={data:[]};
+					console.log('insideFormatTextValue',chartObj[propertyName][colProperty]['yAxis']);
 					_.each(chartObj[propertyName][colProperty]['data'],function(d,i) {
-					valueObj[propertyName][colProperty]['data'].push(formatTextValue[chartObj[propertyName][colProperty]['yAxis']](d));
+					valueObj[propertyName][colProperty]['data'].push(formatTextValue[chartObj[propertyName][colProperty]['yAxis'][0]](d));
 					});
 				}
             }
@@ -2185,10 +2253,40 @@ function debugFn() {
         return valueObj;
     };
     //end specific for sparkchart
-}
+	filterDataByLayout = function(modelData,layoutClass,setThisDateKey,setThisDateCast){
+		var filterDataOutput=[];
+		var thisPeriodFilter={
+			'thisYear': function(data){
+			var thisYear=(setThisDateKey== 'setThisDateCast') ? (new Date).getYear(): (new Date(setThisDateCast)).geYear();
+			var filtered=_.filter(data,function(d) {
+			return (new Date(d.category)).getYear()==thisYear;
+			}); return filtered;
+			},'thisMonth':function(data){
+	var thisMonth=(setThisDateKey== 'setThisDateCast') ? (new Date).getMonth(): (new Date(setThisDateCast)).getMonth();
+	console.log('thisMonth',thisMonth);
+				var filtered=_.filter(data,function(d) {
+			return (new Date(d.category)).getMonth()==thisMonth;
+			}); return filtered;
+			},'default':function(data){ return data;}
+		};
+
+		var yAxisNest=d3.nest()
+						.key(function(d) {
+						return d.yAxis;
+						}).rollup(function(d){
+							var yAxisVal = d[0]['yAxis'];
+							console.log('yAxisVal in nest',yAxisVal, '  layoutClass:',layoutClass);
+							console.log('layoutClass[yAxisVal]',layoutClass[yAxisVal]['thisPeriod']);
+							var output=thisPeriodFilter[layoutClass[yAxisVal]['thisPeriod']](d);
+							_.each(output,function(d){filterDataOutput.push(d); });
+						}).entries(modelData);
+		return filterDataOutput;
+	};
+	}
 //helper function for data grouping multiselect
 function setTDomain1(modelData, tCol) {
-
+console.log('setTDomain1, modelData,',modelData);
+console.log('setTDomain1, tCol,',tCol);
     var yearFormat = d3.time.format("%Y");
     var monthFormat = d3.time.format("%b");
     //getting first day
@@ -2213,6 +2311,7 @@ function setTDomain1(modelData, tCol) {
     var domainArr = [minDate, maxDate];
     var domainArr = [roundMin, roundMax];
     //--
+	console.log('domainArr...',domainArr);
     return domainArr;
 
 }
