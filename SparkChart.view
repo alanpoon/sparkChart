@@ -1084,13 +1084,12 @@ if (view.data.jsonClass === "DataEmbedded") {
     var reduceCToggleArr = extendedArr;
 } else {
     rawdata = ${data};
-    var extendedArr = extendArr(rawdata, f, view);
-
+	var extendedArr=rawdata;
 }
 
-console.log("rawdata", JSON.stringify(rawdata));
+console.log("extendedArr", JSON.stringify(extendedArr));
 var data1 = arrToHex1(extendedArr, f, view);
-
+console.log("data1", JSON.stringify(data1));
 var data2 = hexToModel1(data1, legendKey, formatLegendCast, view);
    //Consider layoutClass
         var layoutClass;
@@ -1105,7 +1104,7 @@ var data2 = hexToModel1(data1, legendKey, formatLegendCast, view);
             };
         } else if (layoutClassKey == 'layoutClassCast') eval(layoutClassCast);
 		console.log('layoutClass: ',layoutClass);
-		console.log("data2", JSON.stringify(data2[0]));
+		console.log("data2", JSON.stringify(data2));
 		var data2=filterDataByLayout(data2,layoutClass,setThisDateKey,setThisDateCast);
 	     if (_.size(data2) == 0) {data2 = [{
                     model: 'column',
@@ -1571,7 +1570,7 @@ function debugFn() {
     };
     chartPreGen = function(data3, tDomainDate) {
         //interpolate data3 by month
-
+console.log('data3: ',JSON.stringify(data3));
         var data4 = [];
         var nestBy = d3.nest().key(function(d, i) {
                 return d.category + "_" + d.groupby1 + "_" + d.columnName;
@@ -1582,7 +1581,7 @@ function debugFn() {
                 sampleObj['value'] = sumValue;
                 data4.push(sampleObj);
             }).entries(data3);
-		console.log('data4: ',JSON.stringify(_.first(data4,3)));
+		console.log('data4: ',JSON.stringify(data4));
         var data5 = interpolateData(data4, tDomainDate);
 		console.log('data5: ',JSON.stringify(_.first(data5,3)));
         var data6 = formatXTicksAndOrdering(data5, view);
