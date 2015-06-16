@@ -85,7 +85,7 @@
         }
       },
       "hint":"directive-data-array",
-      "directive":"ZnVuY3Rpb24gZGF0YSgpew0KdmFyIGNUb2dnbGVUeXBlPXZpZXcudHlwZWluZm8uZGF0YS5maWVsZHMuY1RvZ2dsZVR5cGVDb2w7DQogICAgdmFyIHQ9dmlldy50eXBlaW5mby5kYXRhLmZpZWxkcy5vcGVyYWJsZS52YWx1ZXM7DQogIAl2YXIgaz12aWV3LnR5cGVpbmZvLmRhdGEuZmllbGRzLmtleXM7DQoNCiAgdmFyIGNvbHVtbnM9W107IHZhciBvcGVyYXRpb25zPVtdOyB2YXIga2V5cz1bXTsNCiBpZihjVG9nZ2xlVHlwZVswXS5uYW1lICE9bnVsbCAmJiB2aWV3LnR5cGVpbmZvLmNUb2dnbGVLZXkhPSdkZWZhdWx0JykNCiB7a2V5cy5wdXNoKGNUb2dnbGVUeXBlWzBdLm5hbWUpO30NCiAgdC5mb3JFYWNoKGZ1bmN0aW9uKGQsaSkgew0KICBjb2x1bW5zLnB1c2goZC5uYW1lKTsNCiAgICBvcGVyYXRpb25zLnB1c2goZC5vcCk7DQogIH0pDQogIGsuZm9yRWFjaChmdW5jdGlvbihkLGkpIHsNCiAgICBrZXlzLnB1c2goZC5uYW1lKTt9KQ0KICAgcmV0dXJuIHJvd3MuZ3JvdXBCeShrZXlzLGNvbHVtbnMsIG9wZXJhdGlvbnMpOw0KfQ0KZGF0YSgpOw=="
+      "directive":"ZnVuY3Rpb24gZGF0YSgpew0KICAgIHZhciB0PXZpZXcudHlwZWluZm8uZGF0YS5maWVsZHMub3BlcmFibGUudmFsdWVzOw0KICAJdmFyIGs9dmlldy50eXBlaW5mby5kYXRhLmZpZWxkcy5rZXlzOw0KDQogIHZhciBjb2x1bW5zPVtdOyB2YXIgb3BlcmF0aW9ucz1bXTsgdmFyIGtleXM9W107DQoNCiAgdC5mb3JFYWNoKGZ1bmN0aW9uKGQsaSkgew0KICBjb2x1bW5zLnB1c2goZC5uYW1lKTsNCiAgICBvcGVyYXRpb25zLnB1c2goZC5vcCk7DQogIH0pDQogIGsuZm9yRWFjaChmdW5jdGlvbihkLGkpIHsNCiAgICBrZXlzLnB1c2goZC5uYW1lKTt9KQ0KICAgcmV0dXJuIHJvd3MuZ3JvdXBCeShrZXlzLGNvbHVtbnMsIG9wZXJhdGlvbnMpOw0KfQ0KZGF0YSgpOw=="
     },
     "typeinfo":{
       "jsonClass":"Bundle",
@@ -98,9 +98,6 @@
           "sort":"key-asc"
         },
         "fields":{
-          "cToggleTypeCol":[{
-            "name":"CToggle"
-          }],
           "keys":[{
             "name":"Date"
           },{
@@ -110,10 +107,6 @@
             "values":[{
               "id":"spline.1",
               "name":"Income",
-              "op":"sum"
-            },{
-              "id":"pie.2",
-              "name":"Cost",
               "op":"sum"
             },{
               "id":"spline.1",
@@ -147,7 +140,8 @@
       "layoutClassKey":"layoutClassCast",
       "layoutClassCast":"layoutClass={1:{'text':true,'chart':true,'multiDataAttr':true,'thisPeriod':'thisMonth'},2:{'text':true,'chart':true,'multiDataAttr':false,'thisPeriod':'thisMonth'}}",
       "setThisDateKey":"setThisDateCast",
-      "setThisDateCast":"2014-10-10"
+      "setThisDateCast":"2014-10-10",
+      "firstKeyType":"default"
       }
   },
   "includes":["/elx/lib/highcharts.js","/elx/lib/Accent2.js","/elx/lib/multiSelectCustom.js"],
@@ -228,7 +222,36 @@
 						 "readonly":false
 					  }
 				   ]
-				},
+				},,
+				{
+				   "jsonClass":"Row",
+				   "cols":[
+					  {
+						 "jsonClass":"Label",
+						 "id":"typeinfo-firstKeyType-label",
+						 "type":"label",
+						 "text":"First Key Type"
+					  },
+					  {
+						 "jsonClass":"Select",
+						 "id":"typeinfo-firstKeyType",
+						 "type":"select",
+						 "value":"${typeinfo.firstKeyType}",
+						 "options":[
+							{
+							   "jsonClass":"Option",
+							   "text":"date",
+							   "value":"date"
+							},
+							{
+							   "jsonClass":"Option",
+							   "text":"default",
+							   "value":"default"
+							}
+						 ]
+					  }
+				   ]
+				}
 				{
 				   "jsonClass":"Row",
 				   "cols":[
@@ -295,61 +318,7 @@
 				   ]
 				}
 			 ]
-		  },
-		  
-		  {
-			 "jsonClass":"Group",
-			 "label":"cToggle",
-			 "rows":[
-			   
-				{
-				   "jsonClass":"Row",
-				   "cols":[
-					  {
-						 "jsonClass":"Label",
-						 "id":"typeinfo-cToggleKey-label",
-						 "type":"label",
-						 "text":"cToggleKey"
-					  },
-					  {
-						 "jsonClass":"Select",
-						 "id":"typeinfo-cToggleKey",
-						 "type":"select",
-						 "value":"${typeinfo.cToggleKey}",
-						 "options":[
-							{
-							   "jsonClass":"Option",
-							   "text":"default",
-							   "value":"default"
-							},
-							{
-							   "jsonClass":"Option",
-							   "text":"Enable Chart Toggle",
-							   "value":"cToggleEnabled"
-							}
-						 ]
-					  }
-				   ]
-				},
-				{
-				   "jsonClass":"Row",
-				   "cols":[
-					  {
-						 "jsonClass":"Label",
-						 "id":"typeinfo-cToggleTypeCol-label",
-						 "type":"label",
-						 "text":"Chart Toggle Type"
-					  },
-					  {
-						 "jsonClass":"SchemaColumnSelect",
-						 "id":"typeinfo-data-cToggleTypeCol",
-						 "type":"select-schema-column",
-						 "value":"${typeinfo.data.cToggleTypeCol}"
-					  }
-				   ]
-				}
-			 ]
-          },{
+		  },{
          "jsonClass":"Group",
          "label":"x Axis",
          "rows":[
@@ -589,52 +558,6 @@
 						 "type":"field",
 						 "value":"${typeinfo.typeAntiType}",
 						 "readonly":false
-					  }
-				   ]
-				},
-				{
-				   "jsonClass":"Row",
-				   "cols":[
-					  {
-						 "jsonClass":"Label",
-						 "id":"typeinfo-cToggleKey-label",
-						 "type":"label",
-						 "text":"cToggleKey"
-					  },
-					  {
-						 "jsonClass":"Select",
-						 "id":"typeinfo-cToggleKey",
-						 "type":"select",
-						 "value":"${typeinfo.cToggleKey}",
-						 "options":[
-							{
-							   "jsonClass":"Option",
-							   "text":"default",
-							   "value":"default"
-							},
-							{
-							   "jsonClass":"Option",
-							   "text":"Enable Chart Toggle",
-							   "value":"cToggleEnabled"
-							}
-						 ]
-					  }
-				   ]
-				},
-				{
-				   "jsonClass":"Row",
-				   "cols":[
-					  {
-						 "jsonClass":"Label",
-						 "id":"typeinfo-cToggleTypeCol-label",
-						 "type":"label",
-						 "text":"Chart Toggle Type"
-					  },
-					  {
-						 "jsonClass":"SchemaColumnSelect",
-						 "id":"typeinfo-data-cToggleTypeCol",
-						 "type":"select-schema-column",
-						 "value":"${typeinfo.data.cToggleTypeCol}"
 					  }
 				   ]
 				}
@@ -964,12 +887,13 @@ elx.bundle.type.SparkChart = {
          	  var dataKey = elx.MultiKeyColumnSection.getKeyData(view,view.typeinfo.data.fields.keys);
            var tableKey=  new elx.MultiKeyColumnSection("typeinfo-property-keys","typeinfo-property", view, dataKey);
       $("#typeinfo-property-keys").data("table",tableKey);
+      console.log('asd',view.typeinfo.data.fields.operable.values);
             var dataOps =  elx.utils.getElxChartOperablesData(view, view.typeinfo.data.fields.operable.values);
    		var tableOp = new elx.MultiChartValueColumnSection("typeinfo-data-fields-operable-values-table",
                                                         "typeinfo-data-fields-operable-values", view, dataOps);
 		$("#typeinfo-data-fields-operable-values-table").data("table",tableOp);
       elx.host.utils.initSectionGroups(view,$("#SparkChart-div"));
-        $("#typeinfo-data-cToggleTypeCol").val(view.typeinfo.data.fields.cToggleTypeCol[0].name);
+      
       
 	},
 
@@ -982,15 +906,14 @@ elx.bundle.type.SparkChart = {
        var dataOp = dataTableOp.table.getData();
           view.typeinfo.data.fields.operable.values = 
           elx.utils.buildElxChartOperablesData(view.typeinfo.data.fields.operable.values,dataOp);
-      
+    	console.log('... dataTableKey', view.typeinfo.data.fields.operable.values);
 	   var dataTableKey = $("#typeinfo-property-keys").data("table");
         var dataKey = dataTableKey.table.getData();
         view.typeinfo.data.fields.keys = elx.MultiKeyColumnSection.buildKeyData(dataKey);
  
 		elx.host.utils.saveProperties(view.typeinfo);
       
-           	var dToggleType = $("#typeinfo-data-cToggleTypeCol").val();
-		view.typeinfo.data.fields.cToggleTypeCol[0].name = dToggleType;
+    
 }
 }
 ========
@@ -1015,7 +938,6 @@ var k = view.typeinfo.data.fields.keys;
 var f = view.typeinfo.data.fields;
 
 var dataGroupKey = view.typeinfo.dataGroupKey;
-var cToggleKey = view.typeinfo.cToggleKey;
 var legendKey = view.typeinfo.legendKey;
 var formatLegendCast = view.typeinfo.formatLegendCast;
 var valueOperationKey = view.typeinfo.valueOperationKey;
@@ -1029,8 +951,10 @@ var valueSuffix = view.typeinfo.valueSuffix;
 var valueDecimals = view.typeinfo.valueDecimals;
 var layoutClassKey = view.typeinfo.layoutClassKey;
 var layoutClassCast = view.typeinfo.layoutClassCast;
+var orderingKey=view.typeinfo.orderingKey;
 var setThisDateKey= view.typeinfo.setThisDateKey;
 var setThisDateCast = view.typeinfo.setThisDateCast;
+var firstKeyType= view.typeinfo.firstKeyType;
 
 var keys = [];
 k.forEach(function(d, i) {
@@ -1046,7 +970,7 @@ t.forEach(function(d, i) {
 })
 var addDataGroupFn, dataGroupClasses, addPeriodOptions, addSubPeriodOptions, dataGroupAvailClass;
 var periodSelect_val = 'month',
-    subPeriodSelect_val, dataGroupUsed, cToggleType, smpGroupbySize;
+    subPeriodSelect_val, dataGroupUsed, smpGroupbySize;
 var periodSelect_el, subPeriodSelect_el;
 var chartPreGen;
 var Set_GroupFn1, Get_CategoryFn, chartGen, groupByFn, reduceCToggle, arrToHex1, hexToModel1, smpColName;
@@ -1105,12 +1029,13 @@ var data2 = hexToModel1(data1, legendKey, formatLegendCast, view);
         } else if (layoutClassKey == 'layoutClassCast') eval(layoutClassCast);
 		console.log('layoutClass: ',layoutClass);
 		console.log("data2", JSON.stringify(data2));
-		var data2=filterDataByLayout(data2,layoutClass,setThisDateKey,setThisDateCast);
+		var data2=filterDataByLayout(data2,layoutClass,setThisDateKey,setThisDateCast,firstKeyType);
 	     if (_.size(data2) == 0) {data2 = [{
                     model: 'column',
-                    category: setThisDateCast,
-                    yAxis: '1',value:0
+                    category: (firstKeyType=='date') ? setThisDateCast: 'category' ,
+                    yAxis: '1',value:0,groupby1:'row'
                 }];}
+				console.log('data2... afterFilter',JSON.stringify(data2));
 addDataGroupFn(data2, 'category', dataGroupKey, '#dataGroup_' + viewId, viewId);
 
 
@@ -1165,53 +1090,19 @@ function debugFn() {
         var idArr = getArr(f, 'id', view);
 
         var propertiesArr = [];
-        console.log("typeof view.typeinfo.data.fields.cToggleTypeCol[0].name", view.typeinfo.data.fields.cToggleTypeCol[0].name);
-        if (view.typeinfo.cToggleKey == 'cToggleEnabled' && view.typeinfo.data.fields.cToggleTypeCol[0].name != null) { //cToggle Toggle the chart based on eikon filter
-            //Console.log a existing cToggleType
-            var cToggleTypeMaj = [];
-            _.each(data, function(d) {
-                cToggleTypeMaj.push(d[0]);
-            });
-            var cToggleTypeUniq = _.uniq(cToggleTypeMaj);
-            var cToggleCount = _.countBy(cToggleTypeMaj, function(types) {
-                var Ttype;
-                _.each(cToggleTypeUniq, function(m) {
-                    if (types == m) Ttype = m;
-                });
-                return Ttype;
-            });
-            console.info("cToggleCount Type", cToggleCount);
-            // initialize cToggleType
 
-            for (var propertyName in cToggleCount) {
-
-                cToggleType = (typeof cToggleType == 'undefined') ? propertyName : (cToggleCount[cToggleType] > cToggleCount[propertyName]) ? cToggleType : propertyName;
-            }
-            var keyArr = _.first(nameArr, keyLength + 1);
-            var colArr = _.last(nameArr, nameArr.length - (keyLength + 1));
-            var nameArr = _.map(colArr, function(num, i) {
-                return opArr[i] + "(" + num + ")";
-            });
-            nameArr = keyArr.concat(nameArr);
-            var keyLArr = d3.range(0, keyLength + 1); //plus 1 because of cToggle
-            keyLArr.forEach(function(d, i) {
-                var obj = (i == 0) ? '#{cToggle}' : (i == 1) ? '#{xaxis}' : '#{groupby' + (i - 1) + '}';
-                propertiesArr.push(obj);
-            })
-        } else if (view.typeinfo.cToggleKey == 'default' || view.typeinfo.data.fields.cToggleTypeCol[0].name == null) {
-            var keyArr = _.first(nameArr, keyLength);
-            var colArr = _.last(nameArr, nameArr.length - keyLength);
-            console.log("keyArr: ", keyArr, "  , colArr", colArr);
-            var nameArr = _.map(colArr, function(num, i) {
-                return opArr[i] + "(" + num + ")";
-            });
-            nameArr = keyArr.concat(nameArr);
-            var keyLArr = d3.range(0, keyLength);
-            keyLArr.forEach(function(d, i) {
-                var obj = (i == 0) ? '#{xaxis}' : '#{groupby' + i + '}';
-                propertiesArr.push(obj);
-            })
-        }
+		var keyArr = _.first(nameArr, keyLength);
+		var colArr = _.last(nameArr, nameArr.length - keyLength);
+		console.log("keyArr: ", keyArr, "  , colArr", colArr);
+		var nameArr = _.map(colArr, function(num, i) {
+			return opArr[i] + "(" + num + ")";
+		});
+		nameArr = keyArr.concat(nameArr);
+		var keyLArr = d3.range(0, keyLength);
+		keyLArr.forEach(function(d, i) {
+			var obj = (i == 0) ? '#{xaxis}' : '#{groupby' + i + '}';
+			propertiesArr.push(obj);
+		})
 
         idArr.forEach(function(d, i) {
             propertiesArr.push("#[" + d + "]");
@@ -1675,7 +1566,7 @@ console.log('data3: ',JSON.stringify(data3));
             nRowsArr.push(d[0].groupby1);
         }).entries(data7);
         _.each(nRowsArr, function(m, i) {
-            table_Body.append("tr").attr("id", "bodyTag" + m).append("th").attr("id", "${id}_th").text(m);
+            table_Body.append("tr").attr("id", "bodyTag" + m.replace(/\s/g, '')).append("th").attr("id", "${id}_th").text(m);
         });
 
         var nHeadArr = (view.typeinfo.header).split(',');
@@ -1685,23 +1576,29 @@ console.log('data3: ',JSON.stringify(data3));
 
         var valueObj = formatTextValueObj(chartObj, textValueKey, formatTextValueCast);
 		console.log('chartObj',chartObj);
+		console.log('valueObj',valueObj);
         var firstChartProperty = nRowsArr[0];
         _.each(nRowsArr, function(r, i) {
-            var bodyTag = table_Body.select('#bodyTag' + r);
+		var bodyTag
+		 bodyTag = table_Body.select('#bodyTag' + r.replace(/\s/g, ''));
+            
+			console.log('bodyTag, :',bodyTag ,'table_Body: ',table_Body);
 			for (var colProperty in valueObj[r]){
-				if (layoutClass[chartObj[r][colProperty]['yAxis'][0]]['text'] == true || layoutClassKey == 'default')
-                    bodyTag.append("td").attr("id", "${id}_td").text(valueObj[r][colProperty]['data']);
+				if (layoutClass[chartObj[r][colProperty]['yAxis'][0]]['text'] == true || layoutClassKey == 'default') {
+                    bodyTag.append("td").attr("id", "${id}_td").text(valueObj[r][colProperty]['data'].toString());
+					console.log('text is true append, colProperty:',colProperty, '..row',r,' text value: ',valueObj[r][colProperty]['data'].toString());
+					}
 				 if (layoutClass[chartObj[r][colProperty]['yAxis'][0]]['chart'] == true || layoutClassKey == 'default'){
 				 var assignedElement=bodyTag.append("td").attr("id","${id}_td").attr("t_o",'spark').attr("name",r);
 					_.each(chartObj[r][colProperty]['data'],function(m,n){
 						var l=n+1;
-						console.log('what is m?: ',m);
+						console.log('what is m?: ',m, 'what is r:',r);
 						assignedElement.attr("data-sparkline"+l,m.join(" ,") +' ; ' + chartObj[r][colProperty]['chartType'][n]);
 					});
 					assignedElement.attr("data-tocategory",chartObj[r][colProperty]['toCategory'].join(" ,")+' ; ');
 				 }
-                   
 			}
+			
         });
 
         chartGen();
@@ -1852,9 +1749,6 @@ console.log('data3: ',JSON.stringify(data3));
                 if (arr[1]) {
                     chart.type = arr[1];
                 }
-                console.log("chart.type", chart.type);
-            
-                console.log("data", data);
 
                 var pieData = [];
                 _.each(toCategoryArray, function(d, i) {
@@ -2252,23 +2146,24 @@ console.log('data3: ',JSON.stringify(data3));
         return valueObj;
     };
     //end specific for sparkchart
-	filterDataByLayout = function(modelData,layoutClass,setThisDateKey,setThisDateCast){
+	filterDataByLayout = function(modelData,layoutClass,setThisDateKey,setThisDateCast,firstKeyType){
 		var filterDataOutput=[];
 		var thisPeriodFilter={
 			'thisYear': function(data){
-			var thisYear=(setThisDateKey== 'setThisDateCast') ? (new Date).getYear(): (new Date(setThisDateCast)).geYear();
+			var thisYear=(setThisDateKey== 'setThisDateCast') ? (new Date(setThisDateCast)).getYear():(new Date).getYear();
 			var filtered=_.filter(data,function(d) {
 			return (new Date(d.category)).getYear()==thisYear;
 			}); return filtered;
 			},'thisMonth':function(data){
-	var thisMonth=(setThisDateKey== 'setThisDateCast') ? (new Date).getMonth(): (new Date(setThisDateCast)).getMonth();
-	console.log('thisMonth',thisMonth);
+	var thisMonth=(setThisDateKey== 'setThisDateCast') ?  (new Date(setThisDateCast)).getMonth():(new Date).getMonth();
+	console.log('thisMonth',thisMonth,'  ..setThisDateCast',setThisDateCast);
 				var filtered=_.filter(data,function(d) {
 			return (new Date(d.category)).getMonth()==thisMonth;
 			}); return filtered;
 			},'default':function(data){ return data;}
 		};
-
+		console.log('firstKeyType',firstKeyType);
+	if (firstKeyType=='date') {
 		var yAxisNest=d3.nest()
 						.key(function(d) {
 						return d.yAxis;
@@ -2280,6 +2175,7 @@ console.log('data3: ',JSON.stringify(data3));
 							_.each(output,function(d){filterDataOutput.push(d); });
 						}).entries(modelData);
 		return filterDataOutput;
+		} else if (firstKeyType=='default') { return modelData;}
 	};
 	}
 //helper function for data grouping multiselect
