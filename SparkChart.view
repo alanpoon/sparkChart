@@ -141,7 +141,9 @@
       "layoutClassCast":"layoutClass={1:{'text':true,'chart':true,'multiDataAttr':true,'thisPeriod':'default'},2:{'text':true,'chart':true,'multiDataAttr':false,'thisPeriod':'thisMonth'}}",
       "setThisDateKey":"default",
       "setThisDateCast":"2014-10-10",
-      "firstKeyType":"date"
+      "firstKeyType":"date",
+      "colorSeriesArray":"#7cb5ec,#434348,#90ed7d,#f7a35c,#ffc0cb,#f15c80,#e4d354,#8085e8,#8d4653,#91e8e1,#d89b00,#9fb27e,#c6c6cd,#284040,#5ead06",
+      "formatColumnNameCast":"formatColumnName={3:{'AR VS AP':{CurValue:AR,PrevValue:AP}}}"
       }
   },
   "includes":["/elx/lib/highcharts.js","/elx/lib/Accent2.js","/elx/lib/multiSelectCustom.js"],
@@ -623,6 +625,29 @@
             }
          ]
       },{
+         "jsonClass":"Group",
+         "label":"Color Series",
+         "rows":[
+            {
+               "jsonClass":"Row",
+               "cols":[
+                  {
+                     "jsonClass":"Label",
+                     "id":"typeinfo-colorSeriesArray-label",
+                     "type":"label",
+                     "text":"Value Decimal"
+                  },
+                   {
+                     "jsonClass":"Field",
+                     "id":"typeinfo-colorSeriesArray",
+                     "type":"field",
+                     "value":"${typeinfo.colorSeriesArray}",
+                     "readonly":false
+                  }
+               ]
+            }
+         ]
+      },{
 			 "jsonClass":"Group",
 			 "label":"Value Operation ?id:A/",
 			 "rows":[
@@ -821,6 +846,24 @@
 						 "readonly":false
 					  }
 				   ]
+				},
+				{
+				   "jsonClass":"Row",
+				   "cols":[
+					  {
+						 "jsonClass":"Label",
+						 "id":"typeinfo-formatColumnNameCast-label",
+						 "type":"label",
+						 "text":"Format ColumnName"
+					  },
+					  {
+						 "jsonClass":"Field",
+						 "id":"typeinfo-formatColumnNameCast",
+						 "type":"field",
+						 "value":"${typeinfo.formatColumnNameCast}",
+						 "readonly":false
+					  }
+				   ]
 				}
 			 ]
 		  },{
@@ -921,12 +964,12 @@ elx.bundle.type.SparkChart = {
 <style type='text/css'>
 	#${id}_result {	text-align: right;color: gray;min-height: 2em;} #${id}_table-sparkline {margin: 0 auto;border-collapse: collapse;}
 	#${id}_th {font-weight: bold;text-align: center;padding: 5px;    border-bottom: 1px solid silver;height: 20px;border-top: 2px solid gray;border-bottom: 2px solid gray;}
-	#${id}_td {padding: 5px;border-bottom: 1px solid silver;height: 20px;}
+	#${id}_td {padding: 5px;border-bottom: 1px solid silver;height: 45px;}
 	#${id}_thead_th {border-top: 2px solid gray;border-bottom: 2px solid gray;} 
 	 .highcharts-tooltip>span {background: white;border: 1px solid silver;border-radius: 3px;box-shadow: 1px 1px 2px #888;padding: 8px;}
 	 .ui-multiselect{padding:2px 0 2px 4px;text-align:left}.ui-multiselect span.ui-icon{float:right}.ui-multiselect-single .ui-multiselect-checkboxes input{position:absolute!important;top:auto!important;left:-9999px}.ui-multiselect-single .ui-multiselect-checkboxes label{padding:5px!important}.ui-multiselect-header{margin-bottom:3px;padding:3px 0 3px 4px}.ui-multiselect-header ul{font-size:.9em}.ui-multiselect-header ul li{float:left;padding:0 10px 0 0}.ui-multiselect-header a{text-decoration:none}.ui-multiselect-header a:hover{text-decoration:underline}.ui-multiselect-header span.ui-icon{float:left}.ui-multiselect-header li.ui-multiselect-close{float:right;text-align:right;padding-right:0}.ui-multiselect-menu{display:none;padding:3px;position:absolute;z-index:10000;text-align:left}.ui-multiselect-checkboxes{position:relative;overflow-y:auto}.ui-multiselect-checkboxes label{cursor:default;display:block;border:1px solid transparent;padding:3px 1px}.ui-multiselect-checkboxes label input{position:relative;top:1px}.ui-multiselect-checkboxes li{clear:both;font-size:.9em;padding-right:3px}.ui-multiselect-checkboxes li.ui-multiselect-optgroup-label{text-align:center;font-weight:700;border-bottom:1px solid}.ui-multiselect-checkboxes li.ui-multiselect-optgroup-label a{display:block;padding:3px;margin:1px 0;text-decoration:none}* html .ui-multiselect-checkboxes label{border:none}
 	</style>
-<table id='dataGroup_${id}' style='margin-Top:2cm' ></table>
+<table id='dataGroup_${id}' style='margin-top:2em'></table>
 	<table id='${id}_table-sparkline'></table>    
 	  
 
@@ -956,7 +999,9 @@ elx.bundle.type.SparkChart = {
 	var setThisDateKey= view.typeinfo.setThisDateKey;
 	var setThisDateCast = view.typeinfo.setThisDateCast;
 	var firstKeyType= view.typeinfo.firstKeyType;
-
+	var colorSeriesArray=(view.typeinfo.colorSeriesArray).split(",");
+	var formatColumnNameCast=view.typeinfo.formatColumnNameCast;
+	
 	var keys = [];
 	k.forEach(function(d, i) {
 		keys.push(d.name);
@@ -975,7 +1020,7 @@ elx.bundle.type.SparkChart = {
 	var periodSelect_el, subPeriodSelect_el;
 	var chartPreGen;
 	var Set_GroupFn1, Get_CategoryFn, chartGen, groupByFn, reduceCToggle, arrToHex1, hexToModel1, smpColName;
-	var formatXTicksAndOrdering, sortByFixedGroupbyClass, autoDetectCategory;
+	var formatXTicksAndOrdering, sortByFixedGroupbyClass, autoDetectCategory,formatColumnName;
 
 	var model_TypeSplitClass, model_DataConvertClass, model_APIClass;
 	var formatTextValueObj;
@@ -1014,7 +1059,7 @@ elx.bundle.type.SparkChart = {
 
 	console.log("extendedArr", JSON.stringify(extendedArr));
 	var data1 = arrToHex1(extendedArr, f, view);
-	console.log("data1", JSON.stringify(data1));
+	
 	var data2 = hexToModel1(data1, legendKey, formatLegendCast, view);
 	   //Consider layoutClass
 			var layoutClass;
@@ -1029,7 +1074,7 @@ elx.bundle.type.SparkChart = {
 				};
 			} else if (layoutClassKey == 'layoutClassCast') eval(layoutClassCast);
 			console.log('layoutClass: ',layoutClass);
-			console.log("data2", JSON.stringify(data2));
+			
 			var data2=filterDataByLayout(data2,layoutClass,setThisDateKey,setThisDateCast,firstKeyType);
 			 if (_.size(data2) == 0) {data2 = [{
 						model: 'column',
@@ -1311,7 +1356,7 @@ elx.bundle.type.SparkChart = {
 						var arr = (d.category).split('-');
 						var monthValue = (parseInt(arr[1].split("Q")[1])) * 3;
 						var monthArr = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
-						console.log("before monthValue", monthValue);
+						
 						var date = new Date(monthArr[monthValue - 1] + ' 15,' + arr[0]);
 						return date.getTime() / 1000
 					};
@@ -1462,7 +1507,7 @@ elx.bundle.type.SparkChart = {
 		};
 		chartPreGen = function(data3, tDomainDate) {
 			//interpolate data3 by month
-	console.log('data3: ',JSON.stringify(data3));
+
 			var data4 = [];
 			var nestBy = d3.nest().key(function(d, i) {
 					return d.category + "_" + d.groupby1 + "_" + d.columnName+"_"+d.yAxis;
@@ -1478,8 +1523,9 @@ elx.bundle.type.SparkChart = {
 			console.log('data5: ',JSON.stringify(_.first(data5,3)));
 			var data6 = formatXTicksAndOrdering(data5, view);
 			var data7 = sortCategory(data6);
-			
-			console.log('data7',JSON.stringify(data7));
+			console.log('data7 size',_.size(data7));
+			var data8 = formatColumnName(data7,view);
+			console.log('data8 size',_.size(data8));
 			//Append preparation
 
 			//[{"model":"spline","yAxis":"1","columnName":"sum(Income)","columnNameWithoutOp":"Income","opName":"sum","value":116,"category":"2014-Jan","groupby1":"Alabama","legendKey":"Alabama_sum(Income)","tColSubPeriod":"Jan"}]		
@@ -1489,7 +1535,10 @@ elx.bundle.type.SparkChart = {
 				.key(function(d, i) {
 					return d.columnName +'_'+d.yAxis;
 				})
-				.map(data7, d3.map);
+				.map(data8, d3.map);
+		
+				console.log('sparkNest',sparkNest);
+				
 			//first colProperty
 			var colPropertyCount = 0;
 			var toCategoryArray;
@@ -1514,11 +1563,13 @@ elx.bundle.type.SparkChart = {
 				   chartObj[propertyName][mapCol[yAxisVal]]['yAxis'].push(chartYaxis);
 				   var toCategoryArray=_.pluck(sparkNest[propertyName][colProperty], 'category');
 				   chartObj[propertyName][mapCol[yAxisVal]]['toCategory']=toCategoryArray;
+				   var sName= sparkNest[propertyName][colProperty][0]['columnNameWithoutOp'];
+				   chartObj[propertyName][mapCol[yAxisVal]]['seriesName'].push(sName);
 					} else { //mapCol Does not Contain
 					//appendTo mapCol & add one to chartObjCol
 					var yAxisVal=sparkNest[propertyName][colProperty][0]['yAxis'];
 					mapCol[yAxisVal]=chartObjCol;
-					chartObj[propertyName][chartObjCol]={data:[],chartType:[],yAxis:[]};
+					chartObj[propertyName][chartObjCol]={data:[],chartType:[],yAxis:[],seriesName:[]};
 					var arr = _.pluck(sparkNest[propertyName][colProperty], 'value');
 					chartObj[propertyName][chartObjCol]['data'].push(arr);
 					var chartModel = sparkNest[propertyName][colProperty][0]['model'];
@@ -1527,6 +1578,8 @@ elx.bundle.type.SparkChart = {
 				   chartObj[propertyName][chartObjCol]['yAxis'].push(chartYaxis);
 					var toCategoryArray=_.pluck(sparkNest[propertyName][colProperty], 'category');
 				   chartObj[propertyName][mapCol[yAxisVal]]['toCategory']=toCategoryArray;
+				   var sName=sparkNest[propertyName][colProperty][0]['columnNameWithoutOp'];
+				   chartObj[propertyName][mapCol[yAxisVal]]['seriesName'].push(sName);
 				   chartObjCol=chartObjCol+1;
 					
 					}
@@ -1534,7 +1587,7 @@ elx.bundle.type.SparkChart = {
 				else { //layout multiDataAttr is false
 					var yAxisVal=sparkNest[propertyName][colProperty][0]['yAxis'];
 					mapCol[yAxisVal]=chartObjCol;
-					chartObj[propertyName][chartObjCol]={data:[],chartType:[],yAxis:[]};
+					chartObj[propertyName][chartObjCol]={data:[],chartType:[],yAxis:[],seriesName:[]};
 					var arr = _.pluck(sparkNest[propertyName][colProperty], 'value');
 					chartObj[propertyName][chartObjCol]['data'].push(arr);
 					var chartModel = sparkNest[propertyName][colProperty][0]['model'];
@@ -1583,22 +1636,18 @@ elx.bundle.type.SparkChart = {
 			_.each(nRowsArr, function(r, i) {
 			var bodyTag
 			 bodyTag = table_Body.select('#bodyTag' + r.replace(/\s/g, ''));
-				
-				console.log('bodyTag, :',bodyTag ,'table_Body: ',table_Body);
 				for (var colProperty in chartObj[r]){
 					if (layoutClass[chartObj[r][colProperty]['yAxis'][0]]['text'] == true || layoutClassKey == 'default') {
 						bodyTag.append("td").attr("id", "${id}_td").text(valueObj[r][colProperty]['data'].toString());
-						console.log('text is true append, colProperty:',colProperty, '..row',r,' text value: ',valueObj[r][colProperty]['data'].toString());
 						}
 					 if (layoutClass[chartObj[r][colProperty]['yAxis'][0]]['chart'] == true || layoutClassKey == 'default'){
-					 	console.log('print chart colProperty',colProperty);
-					 var assignedElement=bodyTag.append("td").attr("id","${id}_td").attr("t_o",'spark').attr("name",r);
+					 var assignedElement=bodyTag.append("td").attr("id","${id}_td").attr("t_o",'spark').attr("piename",r);
 						_.each(chartObj[r][colProperty]['data'],function(m,n){
 							var l=n+1;
-							console.log('what is m?: ',m, 'what is r:',r);
-							assignedElement.attr("data-sparkline"+l,m.join(" ,") +' ; ' + chartObj[r][colProperty]['chartType'][n]);
+							assignedElement.attr("data-sparkline"+l,m.join(",") +'; ' + chartObj[r][colProperty]['chartType'][n]);
+							assignedElement.attr("seriesName"+l,chartObj[r][colProperty]['seriesName'][n]);
 						});
-						assignedElement.attr("data-tocategory",chartObj[r][colProperty]['toCategory'].join(" ,")+' ; ');
+						assignedElement.attr("data-tocategory",chartObj[r][colProperty]['toCategory'].join(",")+'; ');
 					 }
 				}
 				
@@ -1615,8 +1664,8 @@ elx.bundle.type.SparkChart = {
 						borderWidth: 0,
 						type: 'area',
 						margin: [2, 0, 2, 0],
-						width: 120,
-						height: 20,
+						width: 160,
+						height: 42,
 						style: {
 							overflow: 'visible'
 						},
@@ -1718,7 +1767,6 @@ elx.bundle.type.SparkChart = {
 					//check number of data attributes
 					var dataNumArr = [];
 					_.each($td[0].attributes, function(d, n) {
-
 						if (_.str.include(d.name,'data-sparkline')) {
 							dataNumArr.push(d.name);
 						}
@@ -1726,22 +1774,22 @@ elx.bundle.type.SparkChart = {
 					if (i < 10) console.log('dataNumArr', JSON.stringify(dataNumArr));
 					var toSeriesArr = [];
 					var toCategoryArray=[];
+					var pieName = $td.attr('piename');
 					_.each(dataNumArr, function(d, n) {
 						var l = n + 1;
 						var stringData = $td.data('sparkline' + l);
-						
-						var name = $td.attr('name');
+						var name = $td.attr('seriesName'+ l);
 						arr = stringData.split('; ');
-						data = $.map(arr[0].split(' ,'), parseFloat);
+						data = $.map(arr[0].split(','), parseFloat);
 						toSeriesArr.push({
 							name: name,
-							data: data,
-							pointStart: 1
+							data: data
 						});
 						if(n==0) {var catData =  $td.data('tocategory');
-						console.log('catData',catData);
+						
 						var catArr=catData.split('; ');
-						toCategoryArray = catArr[0].split(' ,'); 
+						toCategoryArray = catArr[0].split(','); 
+						console.log('name',name,'  seriesData',JSON.stringify(data),': toCategoryArray',JSON.stringify(toCategoryArray));
 						}
 					})
 					if (i < 3) console.log('toSeries', JSON.stringify(toSeriesArr));
@@ -1757,7 +1805,6 @@ elx.bundle.type.SparkChart = {
 					_.each(toCategoryArray, function(d, i) {
 						pieData.push([d, data[i]]);
 					});
-					console.log("piedata", pieData);
 					var chartObjForNotPie = {
 						xAxis: {
 							categories: toCategoryArray
@@ -1791,13 +1838,16 @@ elx.bundle.type.SparkChart = {
 						},
 						series: [{
 							type: 'pie',
-							name: name,
+							name: pieName,
 							data: pieData,
-							size: 29
+							size: 50
 						}],
 
 					};
 					var chartObj = (chart.type == 'pie') ? chartObjPie : chartObjForNotPie;
+					  Highcharts.setOptions({
+							colors: colorSeriesArray
+						});
 					$td.highcharts('SparkLine', chartObj);
 
 					n++;
@@ -2159,7 +2209,6 @@ elx.bundle.type.SparkChart = {
 				},'thisMonth':function(data){
 		var thisMonth=(setThisDateKey== 'setThisDateCast') ? d3.time.format("%Y-%b")(new Date(setThisDateCast)) : d3.time.format("%Y-%b")(new Date)
 		
-		console.log('thisMonth',thisMonth,'  ..setThisDateCast',setThisDateCast);
 					var filtered=_.filter(data,function(d) {
 				return d3.time.format("%Y-%b")(new Date(d.category))==thisMonth;
 				}); return filtered;
@@ -2177,6 +2226,40 @@ elx.bundle.type.SparkChart = {
 							}).entries(modelData);
 			return filterDataOutput;
 			} else if (firstKeyType=='default') { return modelData;}
+		};
+		formatColumnName=function(modelData,view){
+		var output=[];
+			var nest=d3.nest()
+					.key(function(d){
+					return d.yAxis;
+					}).key(function(d){
+					return d.groupby1;
+					}).rollup(function(d){
+					
+					if(typeof layoutClass[d[0]['yAxis']]['formatColumnNameKey']!='undefined'){
+						var formatColumnName;
+						eval(formatColumnNameCast);
+						
+						if(typeof formatColumnName[d[0]['yAxis']]!='undefined'){
+						if(_.has(formatColumnName[d[0]['yAxis']],d[0]['groupby1'])) {
+						console.log('formatColumnName..obj has ',JSON.stringify(d[0]));
+							var changeColData=_.map(d,function(u){
+								var obj=_.clone(u);
+								obj['columnNameWithoutOp']=formatColumnName[d[0]['yAxis']][u.groupby1][u.columnNameWithoutOp];
+								return obj;
+							});
+							console.log('changeColData size',_.size(changeColData),'..',JSON.stringify(changeColData));
+							output=_.union(output,changeColData);
+							}	else output=_.union(output,d);
+							} else {
+							output=_.union(output,d);
+							}
+							}
+							else output=_.union(output,d);
+					}).entries(modelData);
+		
+			console.log('formatColumnName output',JSON.stringify(output));
+			return output;
 		};
 		}
 	//helper function for data grouping multiselect
