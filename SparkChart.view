@@ -128,7 +128,7 @@
       "formatValueOperationCast":"operation.prototype.value=function(){ return [this.A-this.B];}",
       "formatValueOperationArg":"A",
       "header":"State,Income,Income per quarter,Costs,Costs per quarter,Result,Result per quarter",
-      "textValueKey":"formatTextValueCast",
+      "textValueKey":"sum",
       "formatTextValueCast":"formatTextValue={1:function(arr){ return _.reduce(arr,function(a,b){return a+b;},0);},2:function(arr){ return _.reduce(arr,function(a,b){return 5;},0);}}",
       "xTicksKey":"string",
       "formatXTicksCast":"",
@@ -222,7 +222,7 @@
 						 "readonly":false
 					  }
 				   ]
-				},,
+				},
 				{
 				   "jsonClass":"Row",
 				   "cols":[
@@ -251,7 +251,7 @@
 						 ]
 					  }
 				   ]
-				}
+				},
 				{
 				   "jsonClass":"Row",
 				   "cols":[
@@ -701,15 +701,15 @@
 				   "cols":[
 					  {
 						 "jsonClass":"Label",
-						 "id":"typeinfo-Header-label",
+						 "id":"typeinfo-header-label",
 						 "type":"label",
 						 "text":"Header"
 					  },
 					    {
 						 "jsonClass":"Field",
-						 "id":"typeinfo-Header",
+						 "id":"typeinfo-header",
 						 "type":"field",
-						 "value":"${typeinfo.Header}",
+						 "value":"${typeinfo.header}",
 						 "readonly":false
 					  }
 				   ]
@@ -918,7 +918,7 @@ elx.bundle.type.SparkChart = {
 }
 ========
 <<<<<<<=view-html=
-	<style type='text/css'>
+<style type='text/css'>
 	#${id}_result {	text-align: right;color: gray;min-height: 2em;} #${id}_table-sparkline {margin: 0 auto;border-collapse: collapse;}
 	#${id}_th {font-weight: bold;text-align: center;padding: 5px;    border-bottom: 1px solid silver;height: 20px;border-top: 2px solid gray;border-bottom: 2px solid gray;}
 	#${id}_td {padding: 5px;border-bottom: 1px solid silver;height: 20px;}
@@ -926,13 +926,14 @@ elx.bundle.type.SparkChart = {
 	 .highcharts-tooltip>span {background: white;border: 1px solid silver;border-radius: 3px;box-shadow: 1px 1px 2px #888;padding: 8px;}
 	 .ui-multiselect{padding:2px 0 2px 4px;text-align:left}.ui-multiselect span.ui-icon{float:right}.ui-multiselect-single .ui-multiselect-checkboxes input{position:absolute!important;top:auto!important;left:-9999px}.ui-multiselect-single .ui-multiselect-checkboxes label{padding:5px!important}.ui-multiselect-header{margin-bottom:3px;padding:3px 0 3px 4px}.ui-multiselect-header ul{font-size:.9em}.ui-multiselect-header ul li{float:left;padding:0 10px 0 0}.ui-multiselect-header a{text-decoration:none}.ui-multiselect-header a:hover{text-decoration:underline}.ui-multiselect-header span.ui-icon{float:left}.ui-multiselect-header li.ui-multiselect-close{float:right;text-align:right;padding-right:0}.ui-multiselect-menu{display:none;padding:3px;position:absolute;z-index:10000;text-align:left}.ui-multiselect-checkboxes{position:relative;overflow-y:auto}.ui-multiselect-checkboxes label{cursor:default;display:block;border:1px solid transparent;padding:3px 1px}.ui-multiselect-checkboxes label input{position:relative;top:1px}.ui-multiselect-checkboxes li{clear:both;font-size:.9em;padding-right:3px}.ui-multiselect-checkboxes li.ui-multiselect-optgroup-label{text-align:center;font-weight:700;border-bottom:1px solid}.ui-multiselect-checkboxes li.ui-multiselect-optgroup-label a{display:block;padding:3px;margin:1px 0;text-decoration:none}* html .ui-multiselect-checkboxes label{border:none}
 	</style>
-	<table id='dataGroup_${id}'></table>
+<table id='dataGroup_${id}' style='margin-Top:2cm' ></table>
 	<table id='${id}_table-sparkline'></table>    
 	  
 
 	<div class='elx-script'>
 	//sparkchart
 	 var div = $("#${id}");
+      console.log('view.typeinfo',view.typeinfo);
 	var viewId = view.id;
 	var k = view.typeinfo.data.fields.keys;
 	var f = view.typeinfo.data.fields;
@@ -1464,7 +1465,7 @@ elx.bundle.type.SparkChart = {
 	console.log('data3: ',JSON.stringify(data3));
 			var data4 = [];
 			var nestBy = d3.nest().key(function(d, i) {
-					return d.category + "_" + d.groupby1 + "_" + d.columnName;
+					return d.category + "_" + d.groupby1 + "_" + d.columnName+"_"+d.yAxis;
 				})
 				.rollup(function(d, i) {
 					var sampleObj = _.clone(d[0]);
@@ -1476,7 +1477,6 @@ elx.bundle.type.SparkChart = {
 			var data5 = interpolateData(data4, tDomainDate);
 			console.log('data5: ',JSON.stringify(_.first(data5,3)));
 			var data6 = formatXTicksAndOrdering(data5, view);
-			console.log('data6: ',JSON.stringify(_.first(data6,3)));
 			var data7 = sortCategory(data6);
 			
 			console.log('data7',JSON.stringify(data7));
@@ -1577,6 +1577,7 @@ elx.bundle.type.SparkChart = {
 
 			var valueObj = formatTextValueObj(chartObj, textValueKey, formatTextValueCast);
 			console.log('chartObj',chartObj);
+			console.log('layoutClass',layoutClass);
 			console.log('valueObj',valueObj);
 			var firstChartProperty = nRowsArr[0];
 			_.each(nRowsArr, function(r, i) {
@@ -1584,12 +1585,13 @@ elx.bundle.type.SparkChart = {
 			 bodyTag = table_Body.select('#bodyTag' + r.replace(/\s/g, ''));
 				
 				console.log('bodyTag, :',bodyTag ,'table_Body: ',table_Body);
-				for (var colProperty in valueObj[r]){
+				for (var colProperty in chartObj[r]){
 					if (layoutClass[chartObj[r][colProperty]['yAxis'][0]]['text'] == true || layoutClassKey == 'default') {
 						bodyTag.append("td").attr("id", "${id}_td").text(valueObj[r][colProperty]['data'].toString());
 						console.log('text is true append, colProperty:',colProperty, '..row',r,' text value: ',valueObj[r][colProperty]['data'].toString());
 						}
 					 if (layoutClass[chartObj[r][colProperty]['yAxis'][0]]['chart'] == true || layoutClassKey == 'default'){
+					 	console.log('print chart colProperty',colProperty);
 					 var assignedElement=bodyTag.append("td").attr("id","${id}_td").attr("t_o",'spark').attr("name",r);
 						_.each(chartObj[r][colProperty]['data'],function(m,n){
 							var l=n+1;
@@ -1740,7 +1742,7 @@ elx.bundle.type.SparkChart = {
 						console.log('catData',catData);
 						var catArr=catData.split('; ');
 						toCategoryArray = catArr[0].split(' ,'); 
-						console.log('toCategoryArray',toCategoryArray);}
+						}
 					})
 					if (i < 3) console.log('toSeries', JSON.stringify(toSeriesArr));
 
@@ -1935,7 +1937,6 @@ elx.bundle.type.SparkChart = {
 		};
 		dataGroupUsed = function(modelData, tCol, subPeriodSelect_val) {
 			//reassign orderingKey
-
 			orderingKey = 'year-' + periodSelect_val;
 			var periodFilterClass = {
 				'month': function(date) {
@@ -2016,7 +2017,6 @@ elx.bundle.type.SparkChart = {
 				});
 				opt.appendTo(updatesubPeriodSelect_el);
 			});
-			console.log("updatesubPeriodSelect_el", updatesubPeriodSelect_el);
 			updatesubPeriodSelect_el.multiselect('refresh');
 		};
 		addSubPeriodOptions = function(modelData, tDomainDate, tCol, periodSelect_val, subPeriodSelect_hex) {
@@ -2067,7 +2067,6 @@ elx.bundle.type.SparkChart = {
 				});
 				opt.appendTo(subPeriodSelect_el);
 			});
-			console.log("subPeriodSelect_el", subPeriodSelect_el);
 			subPeriodSelect_el.multiselect('refresh');
 		};
 		dataGroupAvailClass = { //return the available options in each type of dataGroup as an array
@@ -2118,19 +2117,21 @@ elx.bundle.type.SparkChart = {
 						return average(arr);
 					};
 					break;
-				case 'formatTextValueCast':
+				case 'formatTextValue':
 					eval(formatTextValueCast);
 			}
 			var valueObj = {};
-			if (textValueKey == 'formatTextValueCast') {
+			if (textValueKey == 'formatTextValue') {
 				for (var propertyName in chartObj) {
+			
 					valueObj[propertyName] = {};
 					for (var colProperty in chartObj[propertyName]) {
+						if(layoutClass[chartObj[propertyName][colProperty]['yAxis'][0]]['text']==true){
 						valueObj[propertyName][colProperty]={data:[]};
-						console.log('insideFormatTextValue',chartObj[propertyName][colProperty]['yAxis']);
 						_.each(chartObj[propertyName][colProperty]['data'],function(d,i) {
 						valueObj[propertyName][colProperty]['data'].push(formatTextValue[chartObj[propertyName][colProperty]['yAxis'][0]](d));
 						});
+						}
 					}
 				}
 			} else {
@@ -2151,15 +2152,16 @@ elx.bundle.type.SparkChart = {
 			var filterDataOutput=[];
 			var thisPeriodFilter={
 				'thisYear': function(data){
-				var thisYear=(setThisDateKey== 'setThisDateCast') ? (new Date(setThisDateCast)).getYear():(new Date).getYear();
+				var thisYear=(setThisDateKey== 'setThisDateCast') ?	(new Date(setThisDateCast)).getYear():(new Date).getYear();
 				var filtered=_.filter(data,function(d) {
 				return (new Date(d.category)).getYear()==thisYear;
 				}); return filtered;
 				},'thisMonth':function(data){
-		var thisMonth=(setThisDateKey== 'setThisDateCast') ?  (new Date(setThisDateCast)).getMonth():(new Date).getMonth();
+		var thisMonth=(setThisDateKey== 'setThisDateCast') ? d3.time.format("%Y-%b")(new Date(setThisDateCast)) : d3.time.format("%Y-%b")(new Date)
+		
 		console.log('thisMonth',thisMonth,'  ..setThisDateCast',setThisDateCast);
 					var filtered=_.filter(data,function(d) {
-				return (new Date(d.category)).getMonth()==thisMonth;
+				return d3.time.format("%Y-%b")(new Date(d.category))==thisMonth;
 				}); return filtered;
 				},'default':function(data){ return data;}
 			};
@@ -2170,9 +2172,7 @@ elx.bundle.type.SparkChart = {
 							return d.yAxis;
 							}).rollup(function(d){
 								var yAxisVal = d[0]['yAxis'];
-								console.log('yAxisVal in nest',yAxisVal, '  layoutClass:',layoutClass);
-								console.log('layoutClass[yAxisVal]',layoutClass[yAxisVal]['thisPeriod']);
-								var output=thisPeriodFilter[layoutClass[yAxisVal]['thisPeriod']](d);
+							    var output=thisPeriodFilter[layoutClass[yAxisVal]['thisPeriod']](d);
 								_.each(output,function(d){filterDataOutput.push(d); });
 							}).entries(modelData);
 			return filterDataOutput;
@@ -2181,8 +2181,7 @@ elx.bundle.type.SparkChart = {
 		}
 	//helper function for data grouping multiselect
 	function setTDomain1(modelData, tCol) {
-	console.log('setTDomain1, modelData,',modelData);
-	console.log('setTDomain1, tCol,',tCol);
+
 		var yearFormat = d3.time.format("%Y");
 		var monthFormat = d3.time.format("%b");
 		//getting first day
