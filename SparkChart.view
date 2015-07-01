@@ -116,8 +116,9 @@
           }
         }
       },
-      "width":500,
-      "height":510,
+      "cellWidth":200,
+      "cellHeight":45,
+      "chartSize":50,
       "dataGroupKey":"timePeriodOptions",
       "title":"Average Monthly R_column and R_splime in Tokyo",
       "subtitle":"Source: WorldClimate.com",
@@ -176,15 +177,15 @@
 				   "cols":[
 					  {
 						 "jsonClass":"Label",
-						 "id":"typeinfo-height-label",
+						 "id":"typeinfo-cellHeight-label",
 						 "type":"label",
-						 "text":"Chart Height"
+						 "text":"Cell Height"
 					  },
 					  {
 						 "jsonClass":"Field",
-						 "id":"typeinfo-height",
+						 "id":"typeinfo-cellHeight",
 						 "type":"field",
-						 "value":"${typeinfo.height}",
+						 "value":"${typeinfo.cellHeight}",
 						 "readonly":false
 					  }
 				   ]
@@ -194,15 +195,15 @@
 				   "cols":[
 					  {
 						 "jsonClass":"Label",
-						 "id":"typeinfo-width-label",
+						 "id":"typeinfo-cellWidth-label",
 						 "type":"label",
-						 "text":"Chart Width"
+						 "text":"Cell Width"
 					  },
 					  {
 						 "jsonClass":"Field",
-						 "id":"typeinfo-width",
+						 "id":"typeinfo-cellWidth",
 						 "type":"field",
-						 "value":"${typeinfo.width}",
+						 "value":"${typeinfo.cellWidth}",
 						 "readonly":false
 					  }
 				   ]
@@ -212,15 +213,15 @@
 				   "cols":[
 					  {
 						 "jsonClass":"Label",
-						 "id":"typeinfo-centre-label",
+						 "id":"typeinfo-chartSize-label",
 						 "type":"label",
-						 "text":"Chart centre"
+						 "text":"Chart Size"
 					  },
 					  {
 						 "jsonClass":"Field",
-						 "id":"typeinfo-centre",
+						 "id":"typeinfo-chartSize",
 						 "type":"field",
-						 "value":"${typeinfo.centre}",
+						 "value":"${typeinfo.chartSize}",
 						 "readonly":false
 					  }
 				   ]
@@ -964,9 +965,10 @@ elx.bundle.type.SparkChart = {
 <style type='text/css'>
 	#${id}_result {	text-align: right;color: gray;min-height: 2em;} #${id}_table-sparkline {margin: 0 auto;border-collapse: collapse;}
 	#${id}_th {font-weight: bold;text-align: center;padding: 5px;    border-bottom: 1px solid silver;height: 20px;border-top: 2px solid gray;border-bottom: 2px solid gray;}
+	#${id}_tw {font-weight: bold;text-align: center;padding: 5px; border-bottom: 1px solid silver;  height: 20px;}
 	#${id}_td {padding: 5px;border-bottom: 1px solid silver;height: 45px;}
 	#${id}_thead_th {border-top: 2px solid gray;border-bottom: 2px solid gray;} 
-	 .highcharts-tooltip>span {background: white;border: 1px solid silver;border-radius: 3px;box-shadow: 1px 1px 2px #888;padding: 8px;}
+	 .highcharts-tooltip>span {background: white;border: 1px solid silver;border-radius: 3px;box-shadow: 1px 1px 2px #888;padding: 8px; }
 	 .ui-multiselect{padding:2px 0 2px 4px;text-align:left}.ui-multiselect span.ui-icon{float:right}.ui-multiselect-single .ui-multiselect-checkboxes input{position:absolute!important;top:auto!important;left:-9999px}.ui-multiselect-single .ui-multiselect-checkboxes label{padding:5px!important}.ui-multiselect-header{margin-bottom:3px;padding:3px 0 3px 4px}.ui-multiselect-header ul{font-size:.9em}.ui-multiselect-header ul li{float:left;padding:0 10px 0 0}.ui-multiselect-header a{text-decoration:none}.ui-multiselect-header a:hover{text-decoration:underline}.ui-multiselect-header span.ui-icon{float:left}.ui-multiselect-header li.ui-multiselect-close{float:right;text-align:right;padding-right:0}.ui-multiselect-menu{display:none;padding:3px;position:absolute;z-index:10000;text-align:left}.ui-multiselect-checkboxes{position:relative;overflow-y:auto}.ui-multiselect-checkboxes label{cursor:default;display:block;border:1px solid transparent;padding:3px 1px}.ui-multiselect-checkboxes label input{position:relative;top:1px}.ui-multiselect-checkboxes li{clear:both;font-size:.9em;padding-right:3px}.ui-multiselect-checkboxes li.ui-multiselect-optgroup-label{text-align:center;font-weight:700;border-bottom:1px solid}.ui-multiselect-checkboxes li.ui-multiselect-optgroup-label a{display:block;padding:3px;margin:1px 0;text-decoration:none}* html .ui-multiselect-checkboxes label{border:none}
 	</style>
 <table id='dataGroup_${id}' style='margin-top:2em'></table>
@@ -1001,7 +1003,10 @@ elx.bundle.type.SparkChart = {
 	var firstKeyType= view.typeinfo.firstKeyType;
 	var colorSeriesArray=(view.typeinfo.colorSeriesArray).split(",");
 	var formatColumnNameCast=view.typeinfo.formatColumnNameCast;
-	
+	var cellWidth=view.typeinfo.cellWidth;
+    var cellHeight=view.typeinfo.cellHeight;
+    var chartSize=view.typeinfo.chartSize;
+
 	var keys = [];
 	k.forEach(function(d, i) {
 		keys.push(d.name);
@@ -1023,7 +1028,7 @@ elx.bundle.type.SparkChart = {
 	var formatXTicksAndOrdering, sortByFixedGroupbyClass, autoDetectCategory,formatColumnName;
 
 	var model_TypeSplitClass, model_DataConvertClass, model_APIClass;
-	var formatTextValueObj;
+	var formatTextValueObj,expectContinuity;
 	debugFn();
 	multiSelectFn(jQuery); // initalise multiSelect datagroup js
 	if (view.data.jsonClass === "DataEmbedded") {
@@ -1082,6 +1087,7 @@ elx.bundle.type.SparkChart = {
 						yAxis: '1',value:0,groupby1:'row'
 					}];}
 					console.log('data2... afterFilter',JSON.stringify(data2));
+			data2=expectContinuity(data2);
 	addDataGroupFn(data2, 'category', dataGroupKey, '#dataGroup_' + viewId, viewId);
 
 
@@ -1521,6 +1527,15 @@ elx.bundle.type.SparkChart = {
 			console.log('data4: ',JSON.stringify(data4));
 			var data5 = interpolateData(data4, tDomainDate);
 			console.log('data5: ',JSON.stringify(_.first(data5,3)));
+					var sparkNest5 = d3.nest().key(function(d, i) {
+					return d.groupby1;
+				})
+				.key(function(d, i) {
+					return d.columnName +'_'+d.yAxis;
+				})
+				.map(data5, d3.map);
+		
+				console.log('sparkNest5',sparkNest5);
 			var data6 = formatXTicksAndOrdering(data5, view);
 			var data7 = sortCategory(data6);
 			console.log('data7 size',_.size(data7));
@@ -1620,7 +1635,7 @@ elx.bundle.type.SparkChart = {
 			}).entries(data7);
 			console.log('nrowsArr',nRowsArr);
 			_.each(nRowsArr, function(m, i) {
-				table_Body.append("tr").attr("id", "bodyTag" + m.replace(/\s/g, '')).append("th").attr("id", "${id}_th").text(m);
+				table_Body.append("tr").attr("id", "bodyTag" + m.replace(/\s/g, '')).append("th").attr("id", "${id}_tw").text(m);
 			});
 
 			var nHeadArr = (view.typeinfo.header).split(',');
@@ -1634,12 +1649,16 @@ elx.bundle.type.SparkChart = {
 			console.log('valueObj',valueObj);
 			var firstChartProperty = nRowsArr[0];
 			_.each(nRowsArr, function(r, i) {
-			var bodyTag
+			var bodyTag;
 			 bodyTag = table_Body.select('#bodyTag' + r.replace(/\s/g, ''));
 				for (var colProperty in chartObj[r]){
+				//if number of 'td' element is less than yAxis, append a blank td
+				console.log('parseInt..',parseInt(chartObj[r][colProperty]['yAxis'][0]));
+					
 					if (layoutClass[chartObj[r][colProperty]['yAxis'][0]]['text'] == true || layoutClassKey == 'default') {
 						bodyTag.append("td").attr("id", "${id}_td").text(valueObj[r][colProperty]['data'].toString());
 						}
+						
 					 if (layoutClass[chartObj[r][colProperty]['yAxis'][0]]['chart'] == true || layoutClassKey == 'default'){
 					 var assignedElement=bodyTag.append("td").attr("id","${id}_td").attr("t_o",'spark').attr("piename",r);
 						_.each(chartObj[r][colProperty]['data'],function(m,n){
@@ -1649,10 +1668,14 @@ elx.bundle.type.SparkChart = {
 						});
 						assignedElement.attr("data-tocategory",chartObj[r][colProperty]['toCategory'].join(",")+'; ');
 					 }
+					// 	if( parseInt(bodyTag.length) < parseInt(chartObj[r][colProperty]['yAxis'][0])) {bodyTag.append("td").attr("id", "${id}_td").text('no records');}
+					 bodyTag.attr("height",cellHeight+"px");
 				}
 				
 			});
 
+ 
+	  
 			chartGen();
 		};
 		chartGen = function() {
@@ -1664,8 +1687,8 @@ elx.bundle.type.SparkChart = {
 						borderWidth: 0,
 						type: 'area',
 						margin: [2, 0, 2, 0],
-						width: 160,
-						height: 42,
+						width: 220,
+						height: 50,
 						style: {
 							overflow: 'visible'
 						},
@@ -1794,18 +1817,15 @@ elx.bundle.type.SparkChart = {
 					})
 					if (i < 3) console.log('toSeries', JSON.stringify(toSeriesArr));
 
-
-					chart = {};
-					
-					if (arr[1]) {
-						chart.type = arr[1];
-					}
-
 					var pieData = [];
 					_.each(toCategoryArray, function(d, i) {
 						pieData.push([d, data[i]]);
 					});
 					var chartObjForNotPie = {
+						chart:{type:(arr[1]) ? arr[1]:'area',
+						width: 250,
+						height: chartSize,
+							},
 						xAxis: {
 							categories: toCategoryArray
 						},
@@ -1814,11 +1834,11 @@ elx.bundle.type.SparkChart = {
 							valueDecimals: valueDecimals,
 							valuePrefix: valuePrefix,
 							valueSuffix: valueSuffix
-						},
-						chart: chart
+						}
 					};
 					var chartObjPie = {
-						chart: {},
+						chart: {width: 180
+							},
 						title: {},
 						tooltip: {
 							pointFormat: '{series.name}: <b>{point.percentage:.1f}%</b>'
@@ -1839,12 +1859,11 @@ elx.bundle.type.SparkChart = {
 						series: [{
 							type: 'pie',
 							name: pieName,
-							data: pieData,
-							size: 50
+							data: pieData,size: 80
 						}],
 
 					};
-					var chartObj = (chart.type == 'pie') ? chartObjPie : chartObjForNotPie;
+					var chartObj = (arr[1] == 'pie') ? chartObjPie : chartObjForNotPie;
 					  Highcharts.setOptions({
 							colors: colorSeriesArray
 						});
@@ -2206,8 +2225,23 @@ elx.bundle.type.SparkChart = {
 				var filtered=_.filter(data,function(d) {
 				return (new Date(d.category)).getYear()==thisYear;
 				}); return filtered;
+				},'thisYearOneDayLate': function(data){
+				var yesterday = new Date();
+				yesterday.setDate(yesterday.getDate() - 1);
+				var thisYear=(setThisDateKey== 'setThisDateCast') ?	(new Date(setThisDateCast)).getYear():yesterday.getYear();
+				var filtered=_.filter(data,function(d) {
+				return (new Date(d.category)).getYear()==thisYear;
+				}); return filtered;
 				},'thisMonth':function(data){
 		var thisMonth=(setThisDateKey== 'setThisDateCast') ? d3.time.format("%Y-%b")(new Date(setThisDateCast)) : d3.time.format("%Y-%b")(new Date)
+		
+					var filtered=_.filter(data,function(d) {
+				return d3.time.format("%Y-%b")(new Date(d.category))==thisMonth;
+				}); return filtered;
+				},'thisMonthOneDayLate':function(data){
+				var yesterday = new Date();
+				yesterday.setDate(yesterday.getDate() - 1);
+		var thisMonth=(setThisDateKey== 'setThisDateCast') ? d3.time.format("%Y-%b")(new Date(setThisDateCast)) : d3.time.format("%Y-%b")(yesterday)
 		
 					var filtered=_.filter(data,function(d) {
 				return d3.time.format("%Y-%b")(new Date(d.category))==thisMonth;
@@ -2227,6 +2261,50 @@ elx.bundle.type.SparkChart = {
 			return filterDataOutput;
 			} else if (firstKeyType=='default') { return modelData;}
 		};
+		expectContinuity =function(modelData){
+			//expect continuity for all rows
+			var result=modelData;
+			var containerObj={};
+			var nest=d3.nest().key(function(d) {return d.groupby1;})
+							.rollup(function(d) { 
+							var container=[];
+								var jNest=d3.nest().key(function(m){
+								return m.columnName+'_'+m.yAxis;
+								}).rollup(function(m){ 
+								container.push(m[0]['columnName']+'_'+m[0]['yAxis']);})
+								.entries(d);
+								var prop=d[0]['groupby1'];
+							containerObj[prop]={size:_.size(container),
+											container:container};
+							  }).entries(modelData);
+			var expected={size:0,container:[]};
+			for (var p in containerObj) {
+			if (containerObj[p]['size'] > expected['size']) {
+			expected['size']=containerObj[p]['size'];
+			expected['container']=containerObj[p]['container'];
+			}
+			} for (var p in containerObj) {
+			if (containerObj[p]['size'] < expected['size']) {
+				var diff=_.difference(expected['container'],containerObj[p]['container']);
+				_.each(diff,function(y,u){
+					var re=/\((.*)\)/;
+					var obj={columnName:y.split('_')[0],
+					category:'2015-07-01',
+					columnNameWithoutOp:y.split('_')[0].match(re)[1],
+					groupby1:p,
+					legendKey:p+'_'+y.split('_')[0],
+					model:'spline',
+					opName:'sum',
+					value:0,
+					yAxis:y.split('_')[1]};
+					result.push(obj);
+				});
+			}
+			}
+			
+			return result;
+			};
+		
 		formatColumnName=function(modelData,view){
 		var output=[];
 			var nest=d3.nest()
