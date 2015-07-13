@@ -1432,7 +1432,7 @@ elx.bundle.type.SparkChart = {
 			if (typeof orderedData[0].ordering !== 'undefined') {
 				var sortedData = [];
 				var sortNest = d3.nest().key(function(d) {
-					return d.columnName;
+					return d.columnName+'_'+d.yAxis;
 				}).rollup(function(d) {
 					var orderedByColName = d.sort(function(a, b) {
 						return a.ordering - b.ordering;
@@ -1526,21 +1526,10 @@ elx.bundle.type.SparkChart = {
 				}).entries(data3);
 			console.log('data4: ',JSON.stringify(data4));
 			var data5 = interpolateData(data4, tDomainDate);
-			console.log('data5: ',JSON.stringify(_.first(data5,3)));
-					var sparkNest5 = d3.nest().key(function(d, i) {
-					return d.groupby1;
-				})
-				.key(function(d, i) {
-					return d.columnName +'_'+d.yAxis;
-				})
-				.map(data5, d3.map);
-		
-				console.log('sparkNest5',sparkNest5);
 			var data6 = formatXTicksAndOrdering(data5, view);
 			var data7 = sortCategory(data6);
-			console.log('data7 size',_.size(data7));
 			var data8 = formatColumnName(data7,view);
-			console.log('data8 size',_.size(data8));
+			console.log('data8 size',_.size(data8),'lol',JSON.stringify(_.first(data8,8)));
 			//Append preparation
 
 			//[{"model":"spline","yAxis":"1","columnName":"sum(Income)","columnNameWithoutOp":"Income","opName":"sum","value":116,"category":"2014-Jan","groupby1":"Alabama","legendKey":"Alabama_sum(Income)","tColSubPeriod":"Jan"}]		
@@ -1552,7 +1541,7 @@ elx.bundle.type.SparkChart = {
 				})
 				.map(data8, d3.map);
 		
-				console.log('sparkNest',sparkNest);
+				console.log('sparkNest',JSON.stringify(sparkNest));
 				
 			//first colProperty
 			var colPropertyCount = 0;
@@ -1567,6 +1556,7 @@ elx.bundle.type.SparkChart = {
 				//mapCol={1:2} means if there is multiDataAttr, all the columnName with yAxis =1 will go to the 2nd column
 				
 				for (var colProperty in sparkNest[propertyName]) {
+				
 				if (layoutClass[sparkNest[propertyName][colProperty][0]['yAxis']]['multiDataAttr'] == true) {
 					var yAxisVal=sparkNest[propertyName][colProperty][0]['yAxis'];
 					if(_.has(mapCol,yAxisVal)) { //mapCol Contains
@@ -1614,10 +1604,10 @@ elx.bundle.type.SparkChart = {
 				   chartObjCol=chartObjCol+1;
 					  
 				}
-				   
+				  console.log('propertyName:',propertyName, ' ,colProperty:',colProperty,' ,mapCol:',JSON.stringify(mapCol));
 				}
 			}
-			console.log('mapCol',mapCol);
+			console.log('mapCol',JSON.stringify(mapCol));
 			//
 
 			//append to the selector
